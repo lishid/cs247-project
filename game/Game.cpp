@@ -128,13 +128,13 @@ void Game::doTurn()
 	}
 }
 
-int main(int argc, char* argv[])
-{
-	int seed = 0;
-	if(argc > 1) {
-		seed = atoi(argv[1]);
-	}
-	Game g =  Game(seed);
-	g.run();
-	return 0;
-}
+//int main(int argc, char* argv[])
+//{
+//	int seed = 0;
+//	if(argc > 1) {
+//		seed = atoi(argv[1]);
+//	}
+///	Game g =  Game(seed);
+//	g.run();
+//	return 0;
+//}
