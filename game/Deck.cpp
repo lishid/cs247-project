@@ -1,5 +1,4 @@
 #include "Deck.h"
-#include <iostream>
 #include <cstdlib>
 
 using namespace std;
@@ -33,11 +32,10 @@ void Deck::shuffle()
 	}
 }
 
-vector<Card*> Deck::deal(int player) const
+void deal(int player, Card** hand) const
 {
-	vector<Card*> v;
-	for(int i = player * RANK_COUNT; i < (player + 1) * RANK_COUNT; i++) {
-		v.push_back(cards[i]);
+	for(int i = 0; i < RANK_COUNT; i++) {
+		hand[i] = cards[player * RANK_COUNT + i];
 	}
 	return v;
 }
@@ -50,19 +48,4 @@ int Deck::findStartingPlayer() const
 		}
 	}
 	return -1;
-}
-
-void Deck::print() const
-{
-	for(int i = 0; i < SUIT_COUNT; i++) {
-		for(int j = 0; j < RANK_COUNT; j++) {
-			cout << *cards[RANK_COUNT * i + j];
-			if(j < RANK_COUNT - 1) {
-				cout << " ";
-			}
-			else {
-				cout << endl;
-			}
-		}
-	}
 }

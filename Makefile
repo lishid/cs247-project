@@ -2,7 +2,7 @@
 CXX=g++
 # builds dependency lists in .d ﬁles
 CXXFLAGS = -g -Wall -MMD `pkg-config gtkmm-2.4 --cflags --libs` 
-OBJECTS = ./Main.o game/Card.o game/Command.o game/Deck.o game/Game.o game/Player.o game/Table.o
+OBJECTS = ./Main.o abstract/observer.o abstract/subject.o game/Card.o game/Command.o game/Deck.o game/Game.o game/Player.o game/Table.o
 # substitute ".o" with ".d"
 DEPENDS = ${OBJECTS:.o=.d}
 EXEC = straights

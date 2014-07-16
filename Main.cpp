@@ -3,11 +3,10 @@
 int main( int argc, char * argv[] )
 {
 	Gtk::Main kit( argc, argv );
-	
-	//Gtk::Window window;
-	
-	//Gtk::Main::run( window );
-	
+	Game game;
+	Controller controller(&game);
+	Window window(&controller, &game);
+	Gtk::Main::run(window);
 	return 0;
 }
 
