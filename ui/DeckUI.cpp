@@ -1,5 +1,7 @@
 #include "DeckUI.h"
 
+using namespace std;
+
 const char * image_names[] = {
 	"img/0_0.png", "img/0_1.png", "img/0_2.png",
 	"img/0_3.png", "img/0_4.png", "img/0_5.png",
@@ -31,7 +33,8 @@ PixPtr loadImage(const string & name) {
 DeckUI::DeckUI()  {
 	int size = G_N_ELEMENTS(image_names);
 	for(int i = 0; i < size; i++) {
-		deck.push_back(loadImage(&image_names[i]));
+		Logger.log(string("Loading image: ") + string(image_names[i]));
+		deck.push_back(loadImage(string(image_names[i])));
 	}
 	//transform(&image_names[0], &image_names[G_N_ELEMENTS(image_names)], std::back_inserter(deck), &loadImage);
 }

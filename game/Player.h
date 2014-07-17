@@ -14,20 +14,19 @@ public:
 	Player(int playerNumber);
 	virtual ~Player();
 	virtual Type turn(Table &table, bool print) = 0;
-	void giveCards(std::vector<Card*> cards);
 	int endRound();
 	int getScore() const;
 	int getPlayerNumber() const;
-	vector<Card*> getDiscards() const;
-	vector<Card*> getCards() const;
+	Card **getCards();
 private:
 	const int playerNumber;
 	int score;
-	vector<Card*> cards;
-	vector<Card*> discards;
+	Card *cards[RANK_COUNT];
+	Card *discards[RANK_COUNT];
 	Card *remove(Card *card);
+	void clear();
 protected:
-	Player(int playerNumber, int score, std::vector<Card*> cards, std::vector<Card*> discards);
+	Player(Player *player);
 	void play(Table &table, Card *card);
 	void discard(Card *card);
 	void printHand() const;

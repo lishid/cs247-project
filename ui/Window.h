@@ -1,8 +1,11 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <gtkmm/window.h>
+#include <gtkmm.h>
 
+#include "../abstract/Observer.h"
+#include "../game/Game.h"
+#include "../ui/Controller.h"
 #include "DeckUI.h"
 
 class Controller;
@@ -14,8 +17,8 @@ public:
 	virtual ~Window();
 	virtual void update();
 private:
-	Model *model;
 	Controller *controller;
+	Game *game;
 	DeckUI deck;
 
 	//Overall frames in vertical space
@@ -32,7 +35,7 @@ private:
 
 	//Controls
 	Gtk::HBox ui_controls;
-	Gtk::TextView ui_seed;
+	Gtk::Entry ui_seed;
 	Gtk::Button ui_start;
 	Gtk::Button ui_quit;
 	

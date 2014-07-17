@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Game::Game(int seed)
+Game::Game()
 {
-	srand48(seed);
+	srand48(0);
 }
 
 Game::~Game()
@@ -68,7 +68,7 @@ bool Game::doRound()
 
 	//Pass cards to players
 	for(int i = 0; i < 4; i++) {
-		player[i]->giveCards(deck.deal(i));
+		deck.deal(i, player[i]->getCards());
 	}
 
 	//Find starting player
@@ -112,7 +112,7 @@ void Game::doTurn()
 				break;
 
 			case DECK:
-				deck.print();
+				//deck.print();
 				break;
 
 			case QUIT:

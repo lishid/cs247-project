@@ -32,12 +32,11 @@ void Deck::shuffle()
 	}
 }
 
-void deal(int player, Card** hand) const
+void Deck::deal(int player, Card** hand) const
 {
 	for(int i = 0; i < RANK_COUNT; i++) {
 		hand[i] = cards[player * RANK_COUNT + i];
 	}
-	return v;
 }
 
 int Deck::findStartingPlayer() const

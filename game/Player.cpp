@@ -4,13 +4,16 @@ using namespace std;
 
 Player::Player(int playerNumber) : playerNumber(playerNumber), score(0)
 {
-
+	clear();
 }
 
-Player::Player(int playerNumber, int score, std::vector<Card*> cards, std::vector<Card*> discards)
-	 : playerNumber(playerNumber), score(score), cards(cards), discards(discards)
+Player::Player(Player *player)
+	 : playerNumber(player->playerNumber), score(player->score)
 {
-
+	for(int i = 0; i < RANK_COUNT; i++) {
+		cards[i] = player->cards[i];
+		discards[i] = player->discards[i];
+	}
 }
 
 Player::~Player()
@@ -18,22 +21,18 @@ Player::~Player()
 
 }
 
-void Player::giveCards(std::vector<Card*> newCards)
-{
-	cards = newCards;
-}
-
 int Player::endRound()
 {
 	int additionalScore = 0;
 
 	cout << "Player " << playerNumber << "'s discards: ";
-	for(vector<Card*>::iterator it = discards.begin() ; it != discards.end(); ) {
-		cout << **it;
-		additionalScore += (*it)->getScore();
-		++it;
-		if(it != discards.end()) {
-			cout << " ";
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(discards[i] != NULL) {
+			cout << *discards[i];
+			additionalScore += discards[i]->getScore();
+			if(i != RANK_COUNT - 1) {
+				cout << " ";
+			}
 		}
 	}
 	cout << endl;
@@ -43,8 +42,7 @@ int Player::endRound()
 	score = newScore;
 
 	//Cleanup
-	cards.clear();
-	discards.clear();
+	clear();
 	return score;
 }
 
@@ -58,12 +56,7 @@ int Player::getPlayerNumber() const
 	return playerNumber;
 }
 
-vector<Card*> Player::getDiscards() const
-{
-	return discards;
-}
-
-vector<Card*> Player::getCards() const
+Card **Player::getCards()
 {
 	return cards;
 }
@@ -71,9 +64,10 @@ vector<Card*> Player::getCards() const
 void Player::printHand() const
 {
 	cout << "Your hand:";
-	for(vector<Card*>::const_iterator it = cards.begin() ; it != cards.end(); ) {
-		cout << " " << **it;
-		++it;
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(cards[i] != NULL) {
+			cout << " " << *cards[i];
+		}
 	}
 	cout << endl;
 }
@@ -81,9 +75,9 @@ void Player::printHand() const
 void Player::printLegalPlays(const Table &table) const
 {
 	cout << "Legal Plays:";
-	for(vector<Card*>::const_iterator it = cards.begin(); it != cards.end(); ++it) {
-		if(table.canPlay(**it)) {
-			cout << " " << **it;
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(table.canPlay(*cards[i])) {
+			cout << " " << *cards[i];
 		}
 	}
 	cout << endl;
@@ -97,9 +91,19 @@ bool Player::canPlay(const Table &table, const Card *card) const
 	}
 
 	//Ensure player has card
-	for(vector<Card*>::const_iterator it = cards.begin(); it != cards.end(); ++it) {
-		if((**it) == *card) {
-			return true;
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(cards[i] != NULL) {
+			if(table.canPlay(*cards[i])) {
+				cout << " " << *cards[i];
+			}
+		}
+	}
+
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(cards[i] != NULL) {
+			if(*cards[i] == *card) {
+				return true;
+			}
 		}
 	}
 
@@ -110,14 +114,16 @@ bool Player::canDiscard(const Table &table, const Card *card) const
 {
 	bool hasCard = false;
 	//Ensure player has card and can't play other cards
-	for(vector<Card*>::const_iterator it = cards.begin(); it != cards.end(); ++it) {
-		//Ensure no cards can be played
-		if(table.canPlay(**it)) {
-			return false;
-		}
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(cards[i] != NULL) {
+			//Ensure no cards can be played
+			if(table.canPlay(*cards[i])) {
+				return false;
+			}
 
-		if((**it) == *card) {
-			hasCard = true;
+			if(*cards[i] == *card) {
+				hasCard = true;
+			}
 		}
 	}
 	return hasCard;
@@ -125,14 +131,24 @@ bool Player::canDiscard(const Table &table, const Card *card) const
 
 Card *Player::remove(Card *card)
 {
-	for(vector<Card*>::iterator it = cards.begin(); it != cards.end(); ++it) {
-		if(**it == *card) {
-			card = *it;
-			cards.erase(it);
-			return card;
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(cards[i] != NULL) {
+			if(*cards[i] == *card) {
+				card = cards[i];
+				cards[i] = NULL;
+				return card;
+			}
 		}
 	}
 	return NULL;
+}
+
+void Player::clear()
+{
+	for(int i = 0; i < RANK_COUNT; i++) {
+		cards[i] = NULL;
+		discards[i] = NULL;
+	}
 }
 
 void Player::play(Table &table, Card *card)
@@ -145,7 +161,11 @@ void Player::play(Table &table, Card *card)
 void Player::discard(Card *card)
 {
 	Card *c = remove(card);
-	discards.push_back(c);
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(discards[i] == NULL) {
+			discards[i] = c;
+		}
+	}
 	cout << "Player " << playerNumber << " discards " << *card << "." << endl;
 }
 
@@ -154,22 +174,24 @@ ComputerPlayer::ComputerPlayer(int playerNumber) : Player(playerNumber)
 
 }
 
-ComputerPlayer::ComputerPlayer(Player *player) : Player(player->getPlayerNumber(), player->getScore(), player->getCards(), player->getDiscards())
+ComputerPlayer::ComputerPlayer(Player *player) : Player(player)
 {
 	delete player;
 }
 
 Type ComputerPlayer::turn(Table &table, bool print)
 {
-	vector<Card*> cards = getCards();
-	for(vector<Card*>::const_iterator it = cards.begin(); it != cards.end(); ++it) {
-		if(table.canPlay(**it)) {
-			play(table, *it);
-			return PLAY;
+	Card** cards = getCards();
+	for(int i = 0; i < RANK_COUNT; i++) {
+		if(cards[i] != NULL) {
+			if(table.canPlay(*cards[i])) {
+				play(table, cards[i]);
+				return PLAY;
+			}
 		}
 	}
 	
-	discard(*cards.begin());
+	discard(cards[0]);
 	return DISCARD;
 }
 
@@ -226,6 +248,3 @@ Type HumanPlayer::turn(Table &table, bool print)
 		}
 	}
 }
-
-
-

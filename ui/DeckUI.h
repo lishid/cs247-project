@@ -3,8 +3,10 @@
 
 #include <gdkmm/pixbuf.h>
 #include <vector>
+#include <string>
 
-#include "../game/card.h"
+#include "Log.h"
+#include "../game/Card.h"
 
 typedef Glib::RefPtr<Gdk::Pixbuf> PixPtr;
 

@@ -14,7 +14,7 @@ using namespace std;
 
 class Game {
 public:
-	Game(int seed);
+	Game();
 	virtual ~Game();
 	void run();
 private:
