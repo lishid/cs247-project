@@ -2,7 +2,7 @@
 
 Window::Window(Controller* c, Game* g)
 	: controller(c), game(g),
-	ui(true, 0), ui_table(true, 1),
+	ui(false, 2), ui_table(true, 1),
 	ui_hand(true, 1), ui_controls(true, 2),
 	ui_start("Start"), ui_quit("Quit"), 
 	ui_players(true, 2)
@@ -40,14 +40,16 @@ Window::Window(Controller* c, Game* g)
 
 	//Overall frames
 	ui.pack_start(ui_progress, true, false);
-	for(int i = 0; i < SUIT_COUNT; i++) {
-		ui.pack_start(*ui_table_rows[i], true, false);
-	}
+	ui.pack_start(ui_table, true, false);
 	ui.pack_start(ui_hand, true, false);
 	ui.pack_start(ui_controls, true, false);
 	ui.pack_start(ui_players, true, false);
 	ui.pack_start(ui_log, true, false);
 
+	//Table
+	for(int i = 0; i < SUIT_COUNT; i++) {
+		ui_table.pack_start(*ui_table_rows[i], false, true);
+	}
 	//Table images
 	for(int i = 0; i < SUIT_COUNT; i++) {
 		for(int j = 0; j < RANK_COUNT; j++) {
@@ -57,21 +59,21 @@ Window::Window(Controller* c, Game* g)
 
 	//Hand cells
 	for(int i = 0; i < RANK_COUNT; i++) {
-		ui_hand.pack_start(*ui_hand_cells[i], true, false);
+		ui_hand.pack_start(*ui_hand_cells[i], true, true);
 	}
 
 	//Controls
 	ui_seed.set_text("0");
-	ui_controls.pack_start(ui_seed, true, false);
-	ui_controls.pack_start(ui_start, true, false);
-	ui_controls.pack_start(ui_quit, true, false);
+	ui_controls.pack_start(ui_seed, true, true);
+	ui_controls.pack_start(ui_start, true, true);
+	ui_controls.pack_start(ui_quit, true, true);
 
 	//Players
 	for(int i = 0; i < 4; i++) {
-		ui_players.pack_start(*ui_player_frame[i], true, false);
+		ui_players.pack_start(*ui_player_frame[i], true, true);
 		ui_player_frame[i]->add(*ui_player_box[i]);
-		ui_player_box[i]->pack_start(*ui_player_score[i], true, false);
-		ui_player_box[i]->pack_start(*ui_player_discards[i], true, false);
+		ui_player_box[i]->pack_start(*ui_player_score[i], true, true);
+		ui_player_box[i]->pack_start(*ui_player_discards[i], true, true);
 	}
 
 	show_all();

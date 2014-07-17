@@ -29,6 +29,7 @@ private:
 	Gtk::ProgressBar ui_progress;
 
 	//Table
+	Gtk::VBox ui_table;
 	Gtk::HBox *ui_table_rows[SUIT_COUNT];
 	Gtk::Image *ui_table_cells[SUIT_COUNT * RANK_COUNT];
 	
