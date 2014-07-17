@@ -3,6 +3,7 @@
 
 void Subject::subscribe(Observer *observer) {
 	observers_.insert(observer);
+	observer->update();
 }
 
 void Subject::unsubscribe(Observer *observer) {
@@ -10,7 +11,7 @@ void Subject::unsubscribe(Observer *observer) {
 }
 
 void Subject::notify() {
-	for (Observers::iterator i = observers_.begin(); i != observers_.end(); ++i){
+	for (Observers::iterator i = observers_.begin(); i != observers_.end(); ++i) {
 		(*i)->update();
 	}
 }

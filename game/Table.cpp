@@ -80,3 +80,9 @@ void Table::print() const
 		cout << endl;
 	}
 }
+
+bool Table::played(Suit suit, Rank rank) const
+{
+	int index = suit * RANK_COUNT + rank;
+	return cards[index];
+}

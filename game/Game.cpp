@@ -12,6 +12,28 @@ Game::~Game()
 
 }
 
+const Table *Game::getTable() const
+{
+	return &table;
+}
+
+const Player *Game::getPlayer(int number) const
+{
+	return player[number];
+}
+
+int Game::getCurrentPlayer() const
+{
+	return currentPlayerNumber;
+}
+
+double Game::getProgress() const
+{
+	double result = currentProgress;
+	result /= SUIT_COUNT * RANK_COUNT;
+	return result;
+}
+
 void Game::run()
 {
 	//Invite players

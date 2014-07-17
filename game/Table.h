@@ -13,6 +13,7 @@ public:
 	void play(const Card &card);
 	bool canPlay(const Card &card) const;
 	void print() const;
+	bool played(Suit suit, Rank rank) const;
 private:
 	bool cards[Deck::DECK_SIZE]; //Cards that has been played
 	bool playable[Deck::DECK_SIZE]; //Cards that can be played

@@ -18,12 +18,19 @@ public:
 	Game();
 	virtual ~Game();
 	void run();
+
+	//Getters
+	const Table *getTable() const;
+	const Player *getPlayer(int number) const;
+	int getCurrentPlayer() const;
+	double getProgress() const;
 private:
 	Deck deck; //The deck for shuffle and dealing
 	Table table; //The table for keeping track of cards
 	Player *player[4]; //4 players
 	int startingPlayer;
-	int turnNumber;
+	int currentPlayerNumber;
+	int currentProgress;
 
 	void invitePlayer(int number);
 	bool doRound();

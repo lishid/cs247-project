@@ -90,7 +90,8 @@ Window::Window(Controller* c, Game* g)
 
 	show_all();
 
-	//game->subscribe(this);
+	game->subscribe(this);
+
 	Logger.log("Window: Complete!");
 }
 
@@ -102,10 +103,20 @@ Window::~Window()
 void Window::update()
 {
 	//Progress
-	double progress = 1;
-	ui_progress.set_fraction(progress);
+	ui_progress.set_fraction(game->getProgress());
 
-
+	//Table cards
+	const Table *table = game->getTable();
+	for(int i = 0; i < SUIT_COUNT; i++) {
+		for(int j = 0; j < RANK_COUNT; j++) {
+			if(table->played((Suit) i, (Rank) j)) {
+				ui_table_cells[i * RANK_COUNT + j]->set(deck.image((Suit) i, (Rank) j));
+			}
+			else {
+				ui_table_cells[i * RANK_COUNT + j]->set(deck.empty());
+			}
+		}
+	}
 }
 
 void Window::handClicked()
@@ -115,7 +126,7 @@ void Window::handClicked()
 
 void Window::buttonStartClicked()
 {
-
+	int seed = atoi(ui_seed.get_text().cstr());
 }
 
 void Window::buttonQuitClicked()

@@ -43,7 +43,7 @@ DeckUI::~DeckUI() {
 }
 
 PixPtr DeckUI::image(Suit suit, Rank rank) {
-	int index = ((int) suit) * 4 + ((int) rank);
+	int index = ((int) suit) * RANK_COUNT + ((int) rank);
 	return deck[index];
 }
 
