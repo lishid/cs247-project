@@ -25,6 +25,16 @@ private:
 	//Overall frames in vertical space
 	Gtk::VBox ui;
 
+	Gtk::HSeparator ui_separator1;
+	Gtk::HSeparator ui_separator2;
+	
+	//Controls
+	Gtk::HBox ui_controls;
+	Gtk::Button ui_start;
+	Gtk::Button ui_quit;
+	Gtk::Label ui_seed_label;
+	Gtk::Entry ui_seed;
+
 	//Game progress
 	Gtk::ProgressBar ui_progress;
 
@@ -35,13 +45,8 @@ private:
 	
 	//Hand
 	Gtk::HBox ui_hand;
-	Gtk::Image *ui_hand_cells[RANK_COUNT];
-	
-	//Controls
-	Gtk::HBox ui_controls;
-	Gtk::Entry ui_seed;
-	Gtk::Button ui_start;
-	Gtk::Button ui_quit;
+	Gtk::EventBox *ui_hand_cells[RANK_COUNT];
+	Gtk::Image *ui_hand_images[RANK_COUNT];
 	
 	//Players
 	Gtk::HBox ui_players;
@@ -52,6 +57,7 @@ private:
 	Gtk::Label *ui_player_discards[4];
 
 	//Game log
+	Gtk::Frame ui_log_frame;
 	Gtk::TextView ui_log;
 
 	void handClicked();

@@ -2,13 +2,14 @@
 
 Window::Window(Controller* c, Game* g)
 	: controller(c), game(g),
-	ui(false, 2), ui_table(true, 1),
-	ui_hand(true, 1), ui_controls(true, 2),
+	ui(false, 2), ui_controls(true, 2),
 	ui_start("Start"), ui_quit("Quit"), 
-	ui_players(true, 2)
+	ui_seed_label("Seed:"), ui_table(true, 1),
+	ui_hand(true, 1), ui_players(true, 2),
+	ui_log_frame("Log")
 {
 	Logger.setConsole(&ui_log);
-	Logger.log("Loading...");
+	Logger.log("Window: Loading...");
 
 	//Table rows
 	PixPtr empty = deck.empty();
@@ -18,10 +19,13 @@ Window::Window(Controller* c, Game* g)
 	//Table cells
 	for(int i = 0; i < SUIT_COUNT * RANK_COUNT; i++) {
 		ui_table_cells[i] = Gtk::manage(new Gtk::Image(empty));
+		ui_table_cells[i]->set_padding(1, 1);
 	}
 	//Hand cells
 	for(int i = 0; i < RANK_COUNT; i++) {
-		ui_hand_cells[i] = Gtk::manage(new Gtk::Image(empty));
+		ui_hand_cells[i] = Gtk::manage(new Gtk::EventBox());
+		ui_hand_images[i] = Gtk::manage(new Gtk::Image(empty));
+		ui_hand_images[i]->set_padding(1, 1);
 	}
 	//Players
 	for(int i = 0; i < 4; i++) {
@@ -39,12 +43,21 @@ Window::Window(Controller* c, Game* g)
 	add(ui);
 
 	//Overall frames
+	ui.pack_start(ui_controls, true, false, 2);
+	ui.pack_start(ui_separator1, true, false);
 	ui.pack_start(ui_progress, true, false);
 	ui.pack_start(ui_table, true, false);
-	ui.pack_start(ui_hand, true, false);
-	ui.pack_start(ui_controls, true, false);
+	ui.pack_start(ui_hand, true, false, 2);
 	ui.pack_start(ui_players, true, false);
-	ui.pack_start(ui_log, true, false);
+	ui.pack_start(ui_separator2, true, false);
+	ui.pack_start(ui_log_frame, true, false, 2);
+
+	//Controls
+	ui_seed.set_text("0");
+	ui_controls.pack_start(ui_seed_label, true, true);
+	ui_controls.pack_start(ui_seed, true, true);
+	ui_controls.pack_start(ui_start, true, true);
+	ui_controls.pack_start(ui_quit, true, true);
 
 	//Table
 	for(int i = 0; i < SUIT_COUNT; i++) {
@@ -59,14 +72,10 @@ Window::Window(Controller* c, Game* g)
 
 	//Hand cells
 	for(int i = 0; i < RANK_COUNT; i++) {
+		ui_hand_cells[i]->add(*ui_hand_images[i]);
+		ui_hand_cells[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("green"));
 		ui_hand.pack_start(*ui_hand_cells[i], true, true);
 	}
-
-	//Controls
-	ui_seed.set_text("0");
-	ui_controls.pack_start(ui_seed, true, true);
-	ui_controls.pack_start(ui_start, true, true);
-	ui_controls.pack_start(ui_quit, true, true);
 
 	//Players
 	for(int i = 0; i < 4; i++) {
@@ -76,10 +85,13 @@ Window::Window(Controller* c, Game* g)
 		ui_player_box[i]->pack_start(*ui_player_discards[i], true, true);
 	}
 
+	//Log
+	ui_log_frame.add(ui_log);
+
 	show_all();
 
 	//game->subscribe(this);
-	Logger.log("Complete!");
+	Logger.log("Window: Complete!");
 }
 
 Window::~Window()
