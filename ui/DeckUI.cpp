@@ -31,12 +31,12 @@ PixPtr loadImage(const string & name) {
 }
 
 DeckUI::DeckUI()  {
+	Logger.log("Loading images...");
 	int size = G_N_ELEMENTS(image_names);
 	for(int i = 0; i < size; i++) {
-		Logger.log(string("Loading image: ") + string(image_names[i]));
 		deck.push_back(loadImage(string(image_names[i])));
 	}
-	//transform(&image_names[0], &image_names[G_N_ELEMENTS(image_names)], std::back_inserter(deck), &loadImage);
+	Logger.log("Complete!");
 }
 
 DeckUI::~DeckUI() {

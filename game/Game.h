@@ -5,6 +5,7 @@
 #include "Deck.h"
 #include "Table.h"
 #include "Player.h"
+#include "../abstract/Subject.h"
 #include <stdlib.h>
 #include <iostream>
 #include <cassert>
@@ -12,7 +13,7 @@
 
 using namespace std;
 
-class Game {
+class Game : public Subject {
 public:
 	Game();
 	virtual ~Game();

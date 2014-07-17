@@ -5,6 +5,7 @@
 
 #include "../abstract/Observer.h"
 #include "../game/Game.h"
+#include "../game/Card.h"
 #include "../ui/Controller.h"
 #include "DeckUI.h"
 
@@ -28,11 +29,13 @@ private:
 	Gtk::ProgressBar ui_progress;
 
 	//Table
-	Gtk::VBox ui_table;
+	Gtk::HBox *ui_table_rows[SUIT_COUNT];
+	Gtk::Image *ui_table_cells[SUIT_COUNT * RANK_COUNT];
 	
 	//Hand
 	Gtk::HBox ui_hand;
-
+	Gtk::Image *ui_hand_cells[RANK_COUNT];
+	
 	//Controls
 	Gtk::HBox ui_controls;
 	Gtk::Entry ui_seed;
@@ -42,21 +45,10 @@ private:
 	//Players
 	Gtk::HBox ui_players;
 
-	Gtk::Frame ui_player1;
-	Gtk::Label ui_player1_score;
-	Gtk::Label ui_player1_discards;
-
-	Gtk::Frame ui_player2;
-	Gtk::Label ui_player2_score;
-	Gtk::Label ui_player2_discards;
-
-	Gtk::Frame ui_player3;
-	Gtk::Label ui_player3_score;
-	Gtk::Label ui_player3_discards;
-
-	Gtk::Frame ui_player4;
-	Gtk::Label ui_player4_score;
-	Gtk::Label ui_player4_discards;
+	Gtk::Frame *ui_player_frame[4];
+	Gtk::VBox *ui_player_box[4];
+	Gtk::Label *ui_player_score[4];
+	Gtk::Label *ui_player_discards[4];
 
 	//Game log
 	Gtk::TextView ui_log;
