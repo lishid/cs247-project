@@ -18,14 +18,6 @@ Window::Window(Controller* c, Game* g)
 	ui_hand(true, 1), ui_players(true, 1)
 {
 
-	//Log
-	//need to set these early, otherwise stuff will not show until the initialization will be complete
-	ui_log.set_size_request(-1, 100);
-	ui_log.set_editable(false);
-	ui_log.set_sensitive(false);
-	ui_log.set_left_margin(3);
-	ui_log_scrollable_container.add(ui_log);
-	ui_log_frame.add(ui_log_scrollable_container);
 
 	Logger.setConsole(&ui_log);
 	lout << "Straights is loading..." << lend;
@@ -123,12 +115,18 @@ Window::Window(Controller* c, Game* g)
 		ui_player_computer[i]->signal_clicked().connect(
 			sigc::mem_fun(*this, &Window::buttonChooseClicked));
 	}
+	
+	//Log
+	ui_log.set_size_request(-1, 100);
+	ui_log.set_editable(false);
+	ui_log.set_sensitive(false);
+	ui_log.set_left_margin(3);
+	ui_log_scrollable_container.add(ui_log);
+	ui_log_frame.add(ui_log_scrollable_container);
 
 	show_all();
 
 	game->subscribe(this);
-
-	lout << "Please select a type for each player." << lend;
 }
 
 Window::~Window()

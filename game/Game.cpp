@@ -96,6 +96,8 @@ void Game::init(int seed)
 
 	lout << "A new game has started." << lend;
 
+	lout << "Please select a type for each player." << lend;
+
 	update();
 }
 
@@ -137,26 +139,6 @@ void Game::invitePlayer(int index, bool isHuman)
 	update();
 }
 
-/*
-bool Game::doRound()
-{
-	//Play 13 turns
-	for(int t = 0; t < 13; t++) {
-		doTurn();
-	}
-
-	//Check scores
-	int maxScore = 0;
-	for(int i = 0; i < 4; i++) {
-		int score = player[i]->endRound();
-		if(score > maxScore) {
-			maxScore = score;
-		}
-	}
-
-	return maxScore >= 80;
-}
-*/
 void Game::doTurn(Command &command)
 {
 	CommandType type = players[currentPlayerNumber]->act(table, command);

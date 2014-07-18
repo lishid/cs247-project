@@ -36,6 +36,9 @@ void Log::flush()
 		buffer->insert_with_tag(buffer->end(), lerr_str, "red");
 		Gtk::TextIter end = buffer->end();
 		console->scroll_to(end);
+		while(Gtk::Main::instance()->events_pending()) {
+			Gtk::Main::instance()->iteration();
+		}
 	}
 	
 	lout.str("");
