@@ -2,7 +2,7 @@
 CXX=g++
 # builds dependency lists in .d ﬁles
 CXXFLAGS = -g -Wall -MMD `pkg-config gtkmm-2.4 --cflags --libs`
-CPPFILES = $(wildcard *.h) $(wildcard abstract/*.h) $(wildcard game/*.h) $(wildcard ui/*.h)
+CPPFILES = $(wildcard abstract/*.h) $(wildcard game/*.h) $(wildcard ui/*.h) $(wildcard *.h)
 OBJECTS = ${CPPFILES:.h=.o}
 # substitute ".o" with ".d"
 DEPENDS = ${OBJECTS:.o=.d}

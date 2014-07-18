@@ -23,6 +23,11 @@ int Player::getPlayerNumber() const
 	return playerNumber;
 }
 
+Card *Player::getCard(int cardNumber) const
+{
+	return hand->getCard(cardNumber);
+}
+
 bool Player::canPlay(const Table &table, const Card &card) const
 {
 	return hand->canPlay(table, card);
@@ -37,31 +42,33 @@ void Player::play(Table &table, const Card &card)
 {
 	Card* c = hand->play(card);
 	table.play(*c);
-	lout << "Player " << playerNumber << " plays " << *c << ".\n";
-	Logger.flush();
+	lout << "Player " << playerNumber << " plays " << *c << "." << lend;
 }
 
 void Player::discard(const Card &card)
 {
 	Card* c = hand->discard(card);
-	lout << "Player " << playerNumber << " discards " << *c << ".\n";
-	Logger.flush();
+	lout << "Player " << playerNumber << " discards " << *c << "." << lend;
 }
+
 
 CommandType ComputerPlayer::act(Table &table, Command &command)
 {
-	/*
-	Card** cards = getCards();
+	Card *firstCard = NULL;
 	for(int i = 0; i < RANK_COUNT; i++) {
-		if(cards[i] != NULL) {
-			if(table.canPlay(*cards[i])) {
-				play(table, cards[i]);
+		Card *card = getCard(i);
+		if(card != NULL) {
+			if(firstCard == NULL) {
+				firstCard = card;
+			}
+			if(canPlay(table, *card)) {
+				play(table, *card);
 				return PLAY;
 			}
 		}
 	}
 	
-	discard(cards[0]);*/
+	discard(*firstCard);
 	return DISCARD;
 }
 
@@ -79,8 +86,7 @@ CommandType HumanPlayer::act(Table &table, Command &c)
 			return c.type;
 		}
 		else {
-			lout << "This is not a legal play.\n";
-			Logger.flush();
+			lout << "This is not a legal play." << lend;
 		}
 		break;
 	case DISCARD:
@@ -89,13 +95,11 @@ CommandType HumanPlayer::act(Table &table, Command &c)
 			return c.type;
 		}
 		else {
-			lout << "You have a legal play. You may not discard.\n";
-			Logger.flush();
+			lout << "You have a legal play. You may not discard." << lend;
 		}
 		break;
 	case RAGEQUIT:
-		lout << "Player " << getPlayerNumber() << " ragequits. A computer will now take over.\n";
-		Logger.flush();
+		lout << "Player " << getPlayerNumber() << " ragequits. A computer will now take over." << lend;
 		return c.type;
 		break;
 	default:

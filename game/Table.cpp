@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Table::Table()
+Table::Table() : lastCard(NULL)
 {
 	reset();
 }
@@ -24,15 +24,18 @@ void Table::reset()
 		playable[i] = false;
 	}
 	playable[SPADE * RANK_COUNT + SEVEN] = true;
+	lastCard = NULL;
 }
 
 void Table::play(const Card &card)
 {
 	assert(canPlay(card));
+
 	int suit = card.getSuit();
 	int rank = card.getRank();
 	//Play the card
 	cards[suit * RANK_COUNT + rank] = true;
+	lastCard = &card;
 
 	//Played the first card, update all sevens
 	if(suit == SPADE && rank == SEVEN) {
@@ -84,4 +87,12 @@ bool Table::played(const Card &card) const
 	int index = card.getSuit() * RANK_COUNT + card.getRank();
 
 	return cards[index];
+}
+
+bool Table::isLastCard(const Card &card) const
+{
+	if(lastCard == NULL) {
+		return false;
+	}
+	return card == *lastCard;
 }

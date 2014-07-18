@@ -2,10 +2,11 @@
 
 using namespace std;
 
-Game::Game()
+Game::Game() : currentPlayerNumber(0), currentTurnNumber(0), isPlaying(false)
 {
 	for(int i = 0; i < 4; i++) {
 		hands[i] = new Hand();
+		players[i] = NULL;
 	}
 }
 
@@ -13,7 +14,7 @@ Game::~Game()
 {
 	for(int i = 0; i < 4; i++) {
 		delete hands[i];
-		delete player[i];
+		delete players[i];
 	}
 }
 
@@ -37,6 +38,11 @@ bool Game::getTableCanPlay(const Card &card) const
 	return table.canPlay(card);
 }
 
+bool Game::getTableLastCard(const Card &card) const
+{
+	return table.isLastCard(card);
+}
+
 //Hand status
 Card *Game::getCurrentPlayerHand(int cardNumber) const
 {
@@ -49,9 +55,17 @@ int Game::getCurrentPlayerNumber() const
 	return currentPlayerNumber;
 }
 
+bool Game::getPlayerExists(int playerNumber) const
+{
+	return players[playerNumber] != NULL;
+}
+
 bool Game::getPlayerIsHuman(int playerNumber) const
 {
-	return player[playerNumber]->isHuman();
+	if(!players[playerNumber]) {
+		return false;
+	}
+	return players[playerNumber]->isHuman();
 }
 
 int Game::getPlayerScore(int playerNumber) const
@@ -68,51 +82,24 @@ void Game::init(int seed)
 {
 	srand48(seed);
 
-	//Invite players
+	//Clear players
 	for(int i = 0; i < 4; i++) {
-		invitePlayer(i);
+		if(players[i]) {
+			delete players[i];
+		}
+		players[i] = NULL;
 	}
 
-/*
-	bool highscore = false;
-	while(!highscore) {
-		highscore = doRound();
-		//Restart if score is not high enough
-	}
+	isPlaying = false;
+	currentTurnNumber = 0;
+	currentPlayerNumber = 0;
 
-	//Print Winners
-	int minScore = 81;
-	for(int i = 0; i < 4; i++) {
-		int score = player[i]->getScore();
-		if(score < minScore) {
-			minScore = score;
-		}
-	}
-	
-	for(int i = 0; i < 4; i++) {
-		int score = player[i]->getScore();
-		if(score == minScore) {
-			cout << "Player " << (i+1) << " wins!" << endl;
-		}
-	}*/
+	lout << "A new game has started." << lend;
+
+	update();
 }
 
-void Game::invitePlayer(int index)
-{/*
-	cout << "Is player " << (index + 1) << " a human(h) or a computer(c)?" << endl << ">";
-	char c;
-	cin >> c;
-	
-	assert(c == 'c' || c == 'C' || c == 'h' || c == 'H');
-	if(c == 'c' || c == 'C') {
-		player[index] = new ComputerPlayer(index + 1);
-	}
-	else if(c == 'h' || c == 'H') {
-		player[index] = new HumanPlayer(index + 1);
-	}*/
-}
-/*
-bool Game::doRound()
+void Game::newRound()
 {
 	//Shuffle first
 	deck.shuffle();
@@ -122,14 +109,37 @@ bool Game::doRound()
 
 	//Pass cards to players
 	for(int i = 0; i < 4; i++) {
-		deck.deal(i, player[i]->getCards());
+		hands[i]->deal(deck.deal(i));
 	}
 
 	//Find starting player
-	startingPlayer = deck.findStartingPlayer();
+	currentPlayerNumber = deck.findStartingPlayer();
+	currentTurnNumber = 0;
 	
-	cout << "A new round begins. It's player " << (startingPlayer + 1) << "'s turn to play." << endl;
+	lout << "A new round begins. It's player " << (currentPlayerNumber + 1) << "'s turn to play." << lend;
 
+	isPlaying = true;
+
+	update();
+}
+
+void Game::invitePlayer(int index, bool isHuman)
+{
+	lout << "Player " << (index + 1) << " is a ";
+	if(isHuman) {
+		lout << "human." << lend;
+		players[index] = new HumanPlayer(index + 1, hands[index]);
+	}
+	else {
+		players[index] = new ComputerPlayer(index + 1, hands[index]);
+		lout << "computer." << lend;
+	}
+	update();
+}
+
+/*
+bool Game::doRound()
+{
 	//Play 13 turns
 	for(int t = 0; t < 13; t++) {
 		doTurn();
@@ -149,28 +159,82 @@ bool Game::doRound()
 */
 void Game::doTurn(Command &command)
 {
-	CommandType type = player[currentPlayerNumber]->act(table, command);
+	CommandType type = players[currentPlayerNumber]->act(table, command);
 
 	switch(type) {
 	case PLAY:
 	case DISCARD:
 		break;
 	case RAGEQUIT:
-		player[currentPlayerNumber] = new ComputerPlayer(player[currentPlayerNumber]);
+		players[currentPlayerNumber] = new ComputerPlayer(players[currentPlayerNumber]);
 	case BAD:
 		return;
 	}
 	currentPlayerNumber = (currentPlayerNumber + 1) % 4;
 	currentTurnNumber++;
+	update();
 }
 
-//int main(int argc, char* argv[])
-//{
-//	int seed = 0;
-//	if(argc > 1) {
-//		seed = atoi(argv[1]);
-//	}
-///	Game g =  Game(seed);
-//	g.run();
-//	return 0;
-//}
+void Game::update()
+{
+	//Check if end of game
+	if(currentTurnNumber >= SUIT_COUNT * RANK_COUNT) {
+		//End of game: stop game
+		isPlaying = false;
+		//Check scores
+		int maxScore = 0;
+		for(int i = 0; i < 4; i++) {
+			hands[i]->endRound();
+			int score = hands[i]->getScore();
+			if(score > maxScore) {
+				maxScore = score;
+			}
+		}
+
+		if(maxScore >= 80) {
+			//Game is finished.
+			//Print Winners
+			int minScore = 81;
+			for(int i = 0; i < 4; i++) {
+				int score = hands[i]->getScore();
+				if(score < minScore) {
+					minScore = score;
+				}
+			}
+			
+			for(int i = 0; i < 4; i++) {
+				int score = hands[i]->getScore();
+				if(score == minScore) {
+					lout << "Player " << (i+1) << " wins!" << lend;
+					currentPlayerNumber = i;
+				}
+			}
+		}
+		else {
+			//Re-start a new round
+			newRound();
+		}
+	}
+	//Pre-game, check if we're ready to start
+	else if(!isPlaying) {
+		int numPlayers = 0;
+		for(int i = 0; i < 4; i++) {
+			if(getPlayerExists(i)) {
+				numPlayers++;
+			}
+		}
+		if(numPlayers == 4) {
+			//Start game!
+			newRound();
+		}
+	}
+	else {
+		//Let computers play
+		if(isPlaying && !getPlayerIsHuman(currentPlayerNumber)) {
+			Command c(PLAY, Card(CLUB, ACE));
+			doTurn(c);
+		}
+	}
+
+	notify();
+}

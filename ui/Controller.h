@@ -5,11 +5,12 @@
 
 class Controller {
 public:
-   Controller(Game*);
-   void nextButtonClicked();
-   void resetButtonClicked();
+	Controller(Game*);
+	void newGame(int seed);
+	void invitePlayer(int number, bool isHuman);
+	void clickCard(int cardNumber);
 private:
-   Game *game;
+	Game *game;
 };
 
 #endif

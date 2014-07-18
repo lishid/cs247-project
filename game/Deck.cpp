@@ -21,6 +21,7 @@ Deck::~Deck()
 
 void Deck::shuffle()
 {
+	lout << "Deck: Giving it a shuffle" << lend;
 	int n = Deck::DECK_SIZE;
 
 	while ( n > 1 ) {

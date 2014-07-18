@@ -14,7 +14,9 @@ public:
 	bool canPlay(const Card &card) const;
 	void print() const;
 	bool played(const Card &card) const;
+	bool isLastCard(const Card &card) const;
 private:
+	const Card *lastCard;
 	bool cards[Deck::DECK_SIZE]; //Cards that has been played
 	bool playable[Deck::DECK_SIZE]; //Cards that can be played
 };

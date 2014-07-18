@@ -15,6 +15,7 @@ public:
 	DeckUI();
 	virtual ~DeckUI();
 	PixPtr image(Suit suit, Rank rank);
+	PixPtr image(const Card &card);
 	PixPtr empty();
 private:
 	std::vector<PixPtr> deck;

@@ -20,6 +20,7 @@ private:
 	const int playerNumber;
 	Hand *hand;
 protected:
+	Card *getCard(int cardNumber) const;
 	bool canPlay(const Table &table, const Card &card) const;
 	bool canDiscard(const Table &table, const Card &card) const;
 	void play(Table &table, const Card &card);

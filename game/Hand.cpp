@@ -2,14 +2,13 @@
 
 using namespace std;
 
-Hand::Hand()
+Hand::Hand() : score(0)
 {
 	clear();
 }
 
-Hand::Hand(Hand *hand)
+Hand::Hand(Hand *hand) : score(hand->score)
 {
-	score = hand->score;
 	for(int i = 0; i < RANK_COUNT; i++) {
 		cards[i] = hand->cards[i];
 		discards[i] = hand->discards[i];
@@ -54,6 +53,7 @@ Card *Hand::discard(const Card &card)
 	for(int i = 0; i < RANK_COUNT; i++) {
 		if(discards[i] == NULL) {
 			discards[i] = c;
+			break;
 		}
 	}
 	return c;

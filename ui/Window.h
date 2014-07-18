@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #include <gtkmm.h>
+#include <stdio.h>
 
 #include "../abstract/Observer.h"
 #include "../game/Game.h"
@@ -46,13 +47,18 @@ private:
 	//Hand
 	Gtk::HBox ui_hand;
 	Gtk::EventBox *ui_hand_cells[RANK_COUNT];
+	Gtk::Alignment *ui_hand_align[RANK_COUNT];
+	Gtk::Button *ui_hand_buttons[RANK_COUNT];
 	Gtk::Image *ui_hand_images[RANK_COUNT];
 	
 	//Players
 	Gtk::HBox ui_players;
 
+	Gtk::EventBox *ui_player_border[4];
 	Gtk::Frame *ui_player_frame[4];
 	Gtk::VBox *ui_player_box[4];
+	Gtk::Button *ui_player_human[4];
+	Gtk::Button *ui_player_computer[4];
 	Gtk::Label *ui_player_score[4];
 	Gtk::Label *ui_player_discards[4];
 
@@ -61,6 +67,7 @@ private:
 	Gtk::TextView ui_log;
 
 	void handClicked();
+	void buttonChooseClicked();
 	void buttonStartClicked();
 	void buttonQuitClicked();
 };

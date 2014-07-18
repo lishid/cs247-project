@@ -2,15 +2,34 @@
 
 Controller::Controller(Game* g) : game(g)
 {
-
+	game->init(0);
 }
 
-void Controller::nextButtonClicked()
+void Controller::newGame(int seed)
 {
-
+	game->init(seed);
 }
 
-void Controller::resetButtonClicked()
+void Controller::invitePlayer(int number, bool isHuman)
 {
+	game->invitePlayer(number, isHuman);
+}
 
+void Controller::clickCard(int cardNumber)
+{
+	int currentPlayer = game->getCurrentPlayerNumber();
+	if(game->getPlayerIsHuman(currentPlayer)) {
+		Card *card = game->getCurrentPlayerHand(cardNumber);
+		if(card == NULL) {
+			return;
+		}
+		if(game->getTableCanPlay(*card)) {
+			Command c(PLAY, *card);
+			game->doTurn(c);
+		}
+		else {
+			Command c(DISCARD, *card);
+			game->doTurn(c);
+		}
+	}
 }

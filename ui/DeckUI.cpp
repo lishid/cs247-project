@@ -31,17 +31,19 @@ PixPtr loadImage(const string & name) {
 }
 
 DeckUI::DeckUI()  {
-	lout << "DeckUI: Pre-loading images...\n";
-	Logger.flush();
+	lout << "DeckUI: Pre-loading images..." << lend;
 	int size = G_N_ELEMENTS(image_names);
 	for(int i = 0; i < size; i++) {
 		deck.push_back(loadImage(string(image_names[i])));
 	}
-	lout << "DeckUI: Complete!\n";
-	Logger.flush();
+	lout << "DeckUI: Complete!" << lend;
 }
 
 DeckUI::~DeckUI() {
+}
+
+PixPtr DeckUI::image(const Card &card) {
+	return image(card.getSuit(), card.getRank());
 }
 
 PixPtr DeckUI::image(Suit suit, Rank rank) {

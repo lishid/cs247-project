@@ -2,6 +2,7 @@
 #define _DECK_
 
 #include "Card.h"
+#include "../ui/Log.h"
 
 class Deck {
 public:
