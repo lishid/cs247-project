@@ -54,21 +54,37 @@ void Player::discard(const Card &card)
 
 CommandType ComputerPlayer::act(Table &table, Command &command)
 {
-	Card *firstCard = NULL;
+	Card *largestPlayable = NULL;
+	Card *smallest = NULL;
+
 	for(int i = 0; i < RANK_COUNT; i++) {
 		Card *card = getCard(i);
 		if(card != NULL) {
-			if(firstCard == NULL) {
-				firstCard = card;
+			if(smallest == NULL) {
+				smallest = card;
 			}
+			else if(card->getScore() < smallest->getScore()) {
+				smallest = card;
+			}
+
 			if(canPlay(table, *card)) {
-				play(table, *card);
-				return PLAY;
+
+				if(largestPlayable == NULL) {
+					largestPlayable = card;
+				}
+				else if(card->getScore() > largestPlayable->getScore()) {
+					largestPlayable = card;
+				}
 			}
 		}
 	}
+
+	if(largestPlayable != NULL) {
+		play(table, *largestPlayable);
+		return PLAY;
+	}
 	
-	discard(*firstCard);
+	discard(*smallest);
 	return DISCARD;
 }
 

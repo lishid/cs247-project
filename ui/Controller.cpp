@@ -2,7 +2,7 @@
 
 Controller::Controller(Game* g) : game(g)
 {
-	game->init(0);
+	
 }
 
 void Controller::newGame(int seed)
