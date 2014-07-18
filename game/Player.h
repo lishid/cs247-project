@@ -4,48 +4,41 @@
 #include "Card.h"
 #include "Table.h"
 #include "Command.h"
-#include <vector>
-#include <iostream>
+#include "Hand.h"
 
-using namespace std;
+#include "../ui/Log.h"
 
 class Player {
 public:
-	Player(int playerNumber);
+	Player(int playerNumber, Hand *h);
+	Player(Player *player);
 	virtual ~Player();
-	virtual Type turn(Table &table, bool print) = 0;
-	int endRound();
-	int getScore() const;
+	virtual CommandType act(Table &table, Command &command) = 0;
+	virtual bool isHuman() const = 0;
 	int getPlayerNumber() const;
-	Card **getCards();
 private:
 	const int playerNumber;
-	int score;
-	Card *cards[RANK_COUNT];
-	Card *discards[RANK_COUNT];
-	Card *remove(Card *card);
-	void clear();
+	Hand *hand;
 protected:
-	Player(Player *player);
-	void play(Table &table, Card *card);
-	void discard(Card *card);
-	void printHand() const;
-	void printLegalPlays(const Table &table) const;
-	bool canPlay(const Table &table, const Card *card) const;
-	bool canDiscard(const Table &table, const Card *card) const;
+	bool canPlay(const Table &table, const Card &card) const;
+	bool canDiscard(const Table &table, const Card &card) const;
+	void play(Table &table, const Card &card);
+	void discard(const Card &card);
 };
 
 class ComputerPlayer : public Player {
 public:
-	ComputerPlayer(int playerNumber);
-	ComputerPlayer(Player *player);
-	Type turn(Table &table, bool print);
+	ComputerPlayer(int playerNumber, Hand *h) : Player(playerNumber, h) {};
+	ComputerPlayer(Player *player) : Player(player) {};
+	CommandType act(Table &table, Command &command);
+	bool isHuman() const;
 };
 
 class HumanPlayer : public Player {
 public:
-	HumanPlayer(int playerNumber);
-	Type turn(Table &table, bool print);
+	HumanPlayer(int playerNumber, Hand *h) : Player(playerNumber, h) {};
+	CommandType act(Table &table, Command &command);
+	bool isHuman() const;
 };
 
 #endif

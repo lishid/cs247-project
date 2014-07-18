@@ -9,7 +9,7 @@ public:
 	virtual ~Deck();
 	
 	void shuffle(); //Shuffle the deck
-	void deal(int player, Card** hand) const; //Deal cards for player
+	Card * const *deal(int player) const; //Deal cards for player
 	int findStartingPlayer() const; //Find the player who has the 7 of spades
 	void print() const; //Debug print the deck
 

@@ -52,9 +52,7 @@ void Table::play(const Card &card)
 
 bool Table::canPlay(const Card &card) const
 {
-	int suit = card.getSuit();
-	int rank = card.getRank();
-	int index = suit * RANK_COUNT + rank;
+	int index = card.getSuit() * RANK_COUNT + card.getRank();
 	
 	//Playable and haven't been played yet
 	return playable[index] && !cards[index];
@@ -81,8 +79,9 @@ void Table::print() const
 	}
 }
 
-bool Table::played(Suit suit, Rank rank) const
+bool Table::played(const Card &card) const
 {
-	int index = suit * RANK_COUNT + rank;
+	int index = card.getSuit() * RANK_COUNT + card.getRank();
+
 	return cards[index];
 }

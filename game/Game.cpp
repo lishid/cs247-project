@@ -4,44 +4,76 @@ using namespace std;
 
 Game::Game()
 {
-	srand48(0);
+	for(int i = 0; i < 4; i++) {
+		hands[i] = new Hand();
+	}
 }
 
 Game::~Game()
 {
-
+	for(int i = 0; i < 4; i++) {
+		delete hands[i];
+		delete player[i];
+	}
 }
 
-const Table *Game::getTable() const
+//Progress status
+double Game::getProgress() const
 {
-	return &table;
+	if(currentTurnNumber > SUIT_COUNT * RANK_COUNT) {
+		return 1;
+	}
+	return (double)currentTurnNumber / (double) SUIT_COUNT / (double) RANK_COUNT;
 }
 
-const Player *Game::getPlayer(int number) const
+//Table status
+bool Game::getTableContainsCard(const Card &card) const
 {
-	return player[number];
+	return table.played(card);
 }
 
-int Game::getCurrentPlayer() const
+bool Game::getTableCanPlay(const Card &card) const
+{
+	return table.canPlay(card);
+}
+
+//Hand status
+Card *Game::getCurrentPlayerHand(int cardNumber) const
+{
+	return hands[currentPlayerNumber]->getCard(cardNumber);
+}
+
+//Player status
+int Game::getCurrentPlayerNumber() const
 {
 	return currentPlayerNumber;
 }
 
-double Game::getProgress() const
+bool Game::getPlayerIsHuman(int playerNumber) const
 {
-	double result = currentProgress;
-	result /= SUIT_COUNT * RANK_COUNT;
-	return result;
+	return player[playerNumber]->isHuman();
 }
 
-void Game::run()
+int Game::getPlayerScore(int playerNumber) const
 {
+	return hands[playerNumber]->getScore();
+}
+
+int Game::getPlayerDiscards(int playerNumber) const
+{
+	return hands[playerNumber]->getDiscards();
+}
+
+void Game::init(int seed)
+{
+	srand48(seed);
+
 	//Invite players
 	for(int i = 0; i < 4; i++) {
 		invitePlayer(i);
 	}
-	
 
+/*
 	bool highscore = false;
 	while(!highscore) {
 		highscore = doRound();
@@ -62,11 +94,11 @@ void Game::run()
 		if(score == minScore) {
 			cout << "Player " << (i+1) << " wins!" << endl;
 		}
-	}
+	}*/
 }
 
 void Game::invitePlayer(int index)
-{
+{/*
 	cout << "Is player " << (index + 1) << " a human(h) or a computer(c)?" << endl << ">";
 	char c;
 	cin >> c;
@@ -77,9 +109,9 @@ void Game::invitePlayer(int index)
 	}
 	else if(c == 'h' || c == 'H') {
 		player[index] = new HumanPlayer(index + 1);
-	}
+	}*/
 }
-
+/*
 bool Game::doRound()
 {
 	//Shuffle first
@@ -114,40 +146,22 @@ bool Game::doRound()
 
 	return maxScore >= 80;
 }
-
-void Game::doTurn()
+*/
+void Game::doTurn(Command &command)
 {
-	//Iterate 4 players
-	for(int i = 0; i < 4; i++) {
-		int p = (i + startingPlayer) % 4;
-		bool first = true;
-		while(true) {
-			Type command = player[p]->turn(table, first);
-			first = false;
-			if(command == PLAY || command == DISCARD) {
-				break;
-			}
+	CommandType type = player[currentPlayerNumber]->act(table, command);
 
-			switch(command) {
-			case PLAY:
-			case DISCARD:
-				break;
-
-			case DECK:
-				//deck.print();
-				break;
-
-			case QUIT:
-			case BAD_COMMAND:
-				exit(0);
-				break;
-
-			case RAGEQUIT:
-				player[p] = new ComputerPlayer(player[p]);
-				break;
-			}
-		}
+	switch(type) {
+	case PLAY:
+	case DISCARD:
+		break;
+	case RAGEQUIT:
+		player[currentPlayerNumber] = new ComputerPlayer(player[currentPlayerNumber]);
+	case BAD:
+		return;
 	}
+	currentPlayerNumber = (currentPlayerNumber + 1) % 4;
+	currentTurnNumber++;
 }
 
 //int main(int argc, char* argv[])

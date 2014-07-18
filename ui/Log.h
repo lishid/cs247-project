@@ -7,13 +7,14 @@
 
 class Log {
 public:
-	void log(const std::string &msg) const;
-	void log(const char* msg) const;
+	void flush();
 	void setConsole(Gtk::TextView *c);
 private:
 	Gtk::TextView *console;
 };
 
+extern std::ostringstream lout;
+extern std::ostringstream lerr;
 extern Log Logger;
 
 #endif

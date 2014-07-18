@@ -4,7 +4,9 @@
 #include "Card.h"
 #include "Deck.h"
 #include "Table.h"
+#include "Hand.h"
 #include "Player.h"
+#include "Command.h"
 #include "../abstract/Subject.h"
 #include <stdlib.h>
 #include <iostream>
@@ -17,24 +19,33 @@ class Game : public Subject {
 public:
 	Game();
 	virtual ~Game();
-	void run();
+	void init(int seed);
 
-	//Getters
-	const Table *getTable() const;
-	const Player *getPlayer(int number) const;
-	int getCurrentPlayer() const;
+	void invitePlayer(int number);
+	void doTurn(Command&);
+
+	//Progress status
 	double getProgress() const;
+
+	//Table status
+	bool getTableContainsCard(const Card &card) const;
+	bool getTableCanPlay(const Card &card) const;
+
+	//Hand status
+	Card *getCurrentPlayerHand(int cardNumber) const;
+
+	//Player status
+	int getCurrentPlayerNumber() const;
+	bool getPlayerIsHuman(int playerNumber) const;
+	int getPlayerScore(int playerNumber) const;
+	int getPlayerDiscards(int playerNumber) const;
 private:
 	Deck deck; //The deck for shuffle and dealing
 	Table table; //The table for keeping track of cards
+	Hand *hands[4]; //4 hands
 	Player *player[4]; //4 players
-	int startingPlayer;
 	int currentPlayerNumber;
-	int currentProgress;
-
-	void invitePlayer(int number);
-	bool doRound();
-	void doTurn();
+	int currentTurnNumber;
 };
 
 #endif

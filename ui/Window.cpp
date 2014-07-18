@@ -9,7 +9,8 @@ Window::Window(Controller* c, Game* g)
 	ui_log_frame("Log")
 {
 	Logger.setConsole(&ui_log);
-	Logger.log("Window: Loading...");
+	lout << "Window: Loading...\n";
+	Logger.flush();
 
 	//Table rows
 	PixPtr empty = deck.empty();
@@ -92,7 +93,8 @@ Window::Window(Controller* c, Game* g)
 
 	game->subscribe(this);
 
-	Logger.log("Window: Complete!");
+	lout << "Window: Complete!\n";
+	Logger.flush();
 }
 
 Window::~Window()
@@ -105,6 +107,7 @@ void Window::update()
 	//Progress
 	ui_progress.set_fraction(game->getProgress());
 
+/*
 	//Table cards
 	const Table *table = game->getTable();
 	for(int i = 0; i < SUIT_COUNT; i++) {
@@ -116,7 +119,7 @@ void Window::update()
 				ui_table_cells[i * RANK_COUNT + j]->set(deck.empty());
 			}
 		}
-	}
+	}*/
 }
 
 void Window::handClicked()
@@ -126,7 +129,9 @@ void Window::handClicked()
 
 void Window::buttonStartClicked()
 {
-	int seed = atoi(ui_seed.get_text().cstr());
+	int seed = atoi(ui_seed.get_text().c_str());
+	//todo: restart game
+	(void) seed;
 }
 
 void Window::buttonQuitClicked()

@@ -2,18 +2,15 @@
 
 using namespace std;
 
-Player::Player(int playerNumber) : playerNumber(playerNumber), score(0)
+
+Player::Player(int n, Hand *h) : playerNumber(n), hand(h)
 {
-	clear();
+
 }
 
-Player::Player(Player *player)
-	 : playerNumber(player->playerNumber), score(player->score)
+Player::Player(Player *player) : playerNumber(player->playerNumber), hand(player->hand)
 {
-	for(int i = 0; i < RANK_COUNT; i++) {
-		cards[i] = player->cards[i];
-		discards[i] = player->discards[i];
-	}
+	delete player;
 }
 
 Player::~Player()
@@ -21,166 +18,39 @@ Player::~Player()
 
 }
 
-int Player::endRound()
-{
-	int additionalScore = 0;
-
-	cout << "Player " << playerNumber << "'s discards: ";
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(discards[i] != NULL) {
-			cout << *discards[i];
-			additionalScore += discards[i]->getScore();
-			if(i != RANK_COUNT - 1) {
-				cout << " ";
-			}
-		}
-	}
-	cout << endl;
-	
-	int newScore = score + additionalScore;
-	cout << "Player " << playerNumber << "'s score: " << score << " + " << additionalScore << " = " << newScore << endl;
-	score = newScore;
-
-	//Cleanup
-	clear();
-	return score;
-}
-
-int Player::getScore() const
-{
-	return score;
-}
-
 int Player::getPlayerNumber() const
 {
 	return playerNumber;
 }
 
-Card **Player::getCards()
+bool Player::canPlay(const Table &table, const Card &card) const
 {
-	return cards;
+	return hand->canPlay(table, card);
 }
 
-void Player::printHand() const
+bool Player::canDiscard(const Table &table, const Card &card) const
 {
-	cout << "Your hand:";
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(cards[i] != NULL) {
-			cout << " " << *cards[i];
-		}
-	}
-	cout << endl;
+	return hand->canDiscard(table, card);
 }
 
-void Player::printLegalPlays(const Table &table) const
+void Player::play(Table &table, const Card &card)
 {
-	cout << "Legal Plays:";
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(table.canPlay(*cards[i])) {
-			cout << " " << *cards[i];
-		}
-	}
-	cout << endl;
-}
-
-bool Player::canPlay(const Table &table, const Card *card) const
-{
-	//Ensure card can be played
-	if(!table.canPlay(*card)) {
-		return false;
-	}
-
-	//Ensure player has card
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(cards[i] != NULL) {
-			if(table.canPlay(*cards[i])) {
-				cout << " " << *cards[i];
-			}
-		}
-	}
-
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(cards[i] != NULL) {
-			if(*cards[i] == *card) {
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-bool Player::canDiscard(const Table &table, const Card *card) const
-{
-	bool hasCard = false;
-	//Ensure player has card and can't play other cards
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(cards[i] != NULL) {
-			//Ensure no cards can be played
-			if(table.canPlay(*cards[i])) {
-				return false;
-			}
-
-			if(*cards[i] == *card) {
-				hasCard = true;
-			}
-		}
-	}
-	return hasCard;
-}
-
-Card *Player::remove(Card *card)
-{
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(cards[i] != NULL) {
-			if(*cards[i] == *card) {
-				card = cards[i];
-				cards[i] = NULL;
-				return card;
-			}
-		}
-	}
-	return NULL;
-}
-
-void Player::clear()
-{
-	for(int i = 0; i < RANK_COUNT; i++) {
-		cards[i] = NULL;
-		discards[i] = NULL;
-	}
-}
-
-void Player::play(Table &table, Card *card)
-{
-	Card *c = remove(card);
+	Card* c = hand->play(card);
 	table.play(*c);
-	cout << "Player " << playerNumber << " plays " << *card << "." << endl;
+	lout << "Player " << playerNumber << " plays " << *c << ".\n";
+	Logger.flush();
 }
 
-void Player::discard(Card *card)
+void Player::discard(const Card &card)
 {
-	Card *c = remove(card);
-	for(int i = 0; i < RANK_COUNT; i++) {
-		if(discards[i] == NULL) {
-			discards[i] = c;
-		}
-	}
-	cout << "Player " << playerNumber << " discards " << *card << "." << endl;
+	Card* c = hand->discard(card);
+	lout << "Player " << playerNumber << " discards " << *c << ".\n";
+	Logger.flush();
 }
 
-ComputerPlayer::ComputerPlayer(int playerNumber) : Player(playerNumber)
+CommandType ComputerPlayer::act(Table &table, Command &command)
 {
-
-}
-
-ComputerPlayer::ComputerPlayer(Player *player) : Player(player)
-{
-	delete player;
-}
-
-Type ComputerPlayer::turn(Table &table, bool print)
-{
+	/*
 	Card** cards = getCards();
 	for(int i = 0; i < RANK_COUNT; i++) {
 		if(cards[i] != NULL) {
@@ -191,60 +61,50 @@ Type ComputerPlayer::turn(Table &table, bool print)
 		}
 	}
 	
-	discard(cards[0]);
+	discard(cards[0]);*/
 	return DISCARD;
 }
 
-
-HumanPlayer::HumanPlayer(int playerNumber) : Player(playerNumber)
+bool ComputerPlayer::isHuman() const
 {
-
+	return false;
 }
 
-Type HumanPlayer::turn(Table &table, bool print)
+CommandType HumanPlayer::act(Table &table, Command &c)
 {
-	if(print) {
-		//Print table
-		table.print();
-		//Print your hand
-		printHand();
-		//Print legal plays
-		printLegalPlays(table);
-	}
-	//Take command
-	Command c;
-	while(true) {
-		cout << ">";
-		cin >> c;
-
-		switch(c.type) {
-		case PLAY:
-			if(canPlay(table, &c.card)) {
-				play(table, &c.card);
-				return c.type;
-			}
-			else {
-				cout << "This is not a legal play." << endl;
-			}
-			break;
-		case DISCARD:
-			if(canDiscard(table, &c.card)) {
-				discard(&c.card);
-				return c.type;
-			}
-			else {
-				cout << "You have a legal play. You may not discard." << endl;
-			}
-			break;
-		case RAGEQUIT:
-			cout << "Player " << getPlayerNumber() << " ragequits. A computer will now take over." << endl;
+	switch(c.type) {
+	case PLAY:
+		if(canPlay(table, c.card)) {
+			play(table, c.card);
 			return c.type;
-			break;
-		case DECK:
-		case QUIT:
-		case BAD_COMMAND:
-			return c.type;
-			break;
 		}
+		else {
+			lout << "This is not a legal play.\n";
+			Logger.flush();
+		}
+		break;
+	case DISCARD:
+		if(canDiscard(table, c.card)) {
+			discard(c.card);
+			return c.type;
+		}
+		else {
+			lout << "You have a legal play. You may not discard.\n";
+			Logger.flush();
+		}
+		break;
+	case RAGEQUIT:
+		lout << "Player " << getPlayerNumber() << " ragequits. A computer will now take over.\n";
+		Logger.flush();
+		return c.type;
+		break;
+	default:
+		break;
 	}
+	return BAD;
+}
+
+bool HumanPlayer::isHuman() const
+{
+	return true;
 }
