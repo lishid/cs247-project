@@ -17,6 +17,7 @@ public:
 	PixPtr image(Suit suit, Rank rank, bool isDisabled);
 	PixPtr image(const Card &card, bool isDisabled);
 	PixPtr empty();
+	PixPtr back();
 private:
 	std::vector<PixPtr> deck;
 	std::vector<PixPtr> deck_disabled;

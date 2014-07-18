@@ -11,6 +11,7 @@ public:
 	virtual ~Table();
 	void reset();
 	void play(const Card &card);
+	void discard(const Card &card);
 	bool canPlay(const Card &card) const;
 	void print() const;
 	bool played(const Card &card) const;

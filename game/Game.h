@@ -28,6 +28,7 @@ public:
 
 	//Progress status
 	double getProgress() const;
+	bool isInProgress() const;
 
 	//Table status
 	bool getTableContainsCard(const Card &card) const;

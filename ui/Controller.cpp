@@ -36,3 +36,8 @@ void Controller::ragequit()
 {
 	game->doTurn(Command(RAGEQUIT));
 }
+
+void Controller::aiTimeout()
+{
+	game->doTurn(Command(AI));
+}

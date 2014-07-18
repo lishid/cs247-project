@@ -24,7 +24,7 @@ protected:
 	bool canPlay(const Table &table, const Card &card) const;
 	bool canDiscard(const Table &table, const Card &card) const;
 	void play(Table &table, const Card &card);
-	void discard(const Card &card);
+	void discard(Table &table, const Card &card);
 };
 
 class ComputerPlayer : public Player {

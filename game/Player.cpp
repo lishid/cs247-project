@@ -45,9 +45,10 @@ void Player::play(Table &table, const Card &card)
 	lout << "Player " << playerNumber << " plays " << *c << "." << lend;
 }
 
-void Player::discard(const Card &card)
+void Player::discard(Table &table, const Card &card)
 {
 	Card* c = hand->discard(card);
+	table.discard(*c);
 	lout << "Player " << playerNumber << " discards " << *c << "." << lend;
 }
 
@@ -88,7 +89,7 @@ CommandType ComputerPlayer::act(Table &table, Command &command)
 		return PLAY;
 	}
 	
-	discard(*smallest);
+	discard(table, *smallest);
 	return DISCARD;
 }
 
@@ -111,7 +112,7 @@ CommandType HumanPlayer::act(Table &table, Command &c)
 		break;
 	case DISCARD:
 		if(canDiscard(table, c.card)) {
-			discard(c.card);
+			discard(table, c.card);
 			return c.type;
 		}
 		else {

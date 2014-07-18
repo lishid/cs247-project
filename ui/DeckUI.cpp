@@ -23,7 +23,7 @@ const char * image_names[] = {
 	"img/3_6.png", "img/3_7.png", "img/3_8.png",
 	"img/3_9.png", "img/3_j.png", "img/3_q.png", "img/3_k.png",
 
-	"img/nothing.png"
+	"img/nothing.png", "img/back.png"
 }; 
 
 const char * image_disabled_names[] = {
@@ -45,9 +45,7 @@ const char * image_disabled_names[] = {
 	"img/3_0_a.png", "img/3_1_a.png", "img/3_2_a.png",
 	"img/3_3_a.png", "img/3_4_a.png", "img/3_5_a.png",
 	"img/3_6_a.png", "img/3_7_a.png", "img/3_8_a.png",
-	"img/3_9_a.png", "img/3_j_a.png", "img/3_q_a.png", "img/3_k_a.png",
-
-	"img/nothing.png"
+	"img/3_9_a.png", "img/3_j_a.png", "img/3_q_a.png", "img/3_k_a.png"
 }; 
 
 DeckUI::DeckUI()  {
@@ -73,6 +71,9 @@ PixPtr DeckUI::image(Suit suit, Rank rank, bool isDisabled) {
 }
 
 PixPtr DeckUI::empty() {
-	int size = deck.size();
-	return deck[size - 1];
+	return deck[deck.size() - 2];
+}
+
+PixPtr DeckUI::back() {
+	return deck[deck.size() - 1];
 }

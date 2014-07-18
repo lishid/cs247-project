@@ -137,6 +137,8 @@ Window::~Window()
 
 void Window::update()
 {
+	int currentPlayer = game->getCurrentPlayerNumber();
+
 	//Progress status
 	ui_progress.set_fraction(game->getProgress());
 
@@ -145,7 +147,7 @@ void Window::update()
 		for(int j = 0; j < RANK_COUNT; j++) {
 			Card card((Suit)i, (Rank)j);
 			if(game->getTableContainsCard(card)) {
-				ui_table_cells[i * RANK_COUNT + j]->set(deck.image(card, false));
+				ui_table_cells[i * RANK_COUNT + j]->set(deck.image(card, !game->getTableLastCard(card)));
 			}
 			else {
 				ui_table_cells[i * RANK_COUNT + j]->set(deck.empty());
@@ -155,19 +157,24 @@ void Window::update()
 
 	//Hand status
 	for(int i = 0; i < RANK_COUNT; i++) {
-		Card *card = game->getCurrentPlayerHand(i);
-		if(card != NULL) {
-			ui_hand_images[i]->set(deck.image(*card, !game->getTableCanPlay(*card)));
-			ui_hand_buttons[i]->set_sensitive(true);
+		if(!game->getPlayerIsHuman(currentPlayer)) {
+			ui_hand_images[i]->set(deck.back());
+			//ui_hand_buttons[i]->set_sensitive(false);
 		}
 		else {
-			ui_hand_images[i]->set(deck.empty());
-			ui_hand_buttons[i]->set_sensitive(false);
+			Card *card = game->getCurrentPlayerHand(i);
+			if(card != NULL) {
+				ui_hand_images[i]->set(deck.image(*card, !game->getTableCanPlay(*card)));
+				//ui_hand_buttons[i]->set_sensitive(true);
+			}
+			else {
+				ui_hand_images[i]->set(deck.empty());
+				//ui_hand_buttons[i]->set_sensitive(false);
+			}
 		}
 	}
 
 	//Player status
-	int currentPlayer = game->getCurrentPlayerNumber();
 	for(int i = 0; i < 4; i++) {
 		bool isCurrentPlayer = i == currentPlayer;
 		int score = game->getPlayerScore(i);
@@ -200,6 +207,12 @@ void Window::update()
 		}
 		ui_player_score[i]->set_text(std::string("Score: ") + std::to_string(score));
 		ui_player_discards[i]->set_text(std::string("Discards: ") + std::to_string(discards));
+	}
+
+	if(game->isInProgress() && !game->getPlayerIsHuman(currentPlayer)) {
+		timeout.disconnect();
+		sigc::slot<bool> slot = sigc::bind(sigc::mem_fun(*this, &Window::aiTimeout), 0);
+		timeout = Glib::signal_timeout().connect(slot, 500);
 	}
 }
 
@@ -237,4 +250,11 @@ void Window::buttonStartClicked()
 void Window::buttonQuitClicked()
 {
 	exit(0);
+}
+
+bool Window::aiTimeout(int timer)
+{
+	timeout.disconnect();
+	controller->aiTimeout();
+	return true;
 }

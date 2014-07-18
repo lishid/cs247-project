@@ -53,6 +53,10 @@ void Table::play(const Card &card)
 	}
 }
 
+void Table::discard(const Card &card) {
+	lastCard = NULL;
+}
+
 bool Table::canPlay(const Card &card) const
 {
 	int index = card.getSuit() * RANK_COUNT + card.getRank();

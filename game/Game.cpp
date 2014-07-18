@@ -27,6 +27,11 @@ double Game::getProgress() const
 	return (double)currentTurnNumber / (double) SUIT_COUNT / (double) RANK_COUNT;
 }
 
+bool Game::isInProgress() const
+{
+	return isPlaying;
+}
+
 //Table status
 bool Game::getTableContainsCard(const Card &card) const
 {
@@ -215,12 +220,6 @@ void Game::update()
 		if(numPlayers == 4) {
 			//Start game!
 			newRound();
-		}
-	}
-	else {
-		//Let computers play
-		if(isPlaying && !getPlayerIsHuman(currentPlayerNumber)) {
-			doTurn(Command(AI));
 		}
 	}
 

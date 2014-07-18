@@ -69,10 +69,13 @@ private:
 	Gtk::ScrolledWindow ui_log_scrollable_container;
 	Gtk::TextView ui_log;
 
+	sigc::connection timeout;
+
 	void handClicked();
 	void buttonChooseClicked();
 	void buttonStartClicked();
 	void buttonQuitClicked();
+	bool aiTimeout(int timer);
 };
 
 #endif
