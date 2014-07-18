@@ -90,6 +90,8 @@ void Game::init(int seed)
 		players[i] = NULL;
 		hands[i]->reset();
 	}
+	//Clear table
+	table.reset();
 
 	isPlaying = false;
 	currentTurnNumber = 0;
@@ -128,7 +130,7 @@ void Game::newRound()
 
 void Game::invitePlayer(int index, bool isHuman)
 {
-	if(getPlayerExists(index)) {
+	if(players[index] != NULL) {
 		return;
 	}
 	lout << "Player " << (index + 1) << " is a ";
@@ -143,13 +145,14 @@ void Game::invitePlayer(int index, bool isHuman)
 	update();
 }
 
-void Game::doTurn(Command &command)
+void Game::doTurn(Command command)
 {
 	CommandType type = players[currentPlayerNumber]->act(table, command);
 
 	switch(type) {
 	case PLAY:
 	case DISCARD:
+	case AI:
 		break;
 	case RAGEQUIT:
 		players[currentPlayerNumber] = new ComputerPlayer(players[currentPlayerNumber]);
@@ -217,8 +220,7 @@ void Game::update()
 	else {
 		//Let computers play
 		if(isPlaying && !getPlayerIsHuman(currentPlayerNumber)) {
-			Command c(PLAY, Card(CLUB, ACE));
-			doTurn(c);
+			doTurn(Command(AI));
 		}
 	}
 

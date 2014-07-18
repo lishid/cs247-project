@@ -2,7 +2,7 @@
 
 Controller::Controller(Game* g) : game(g)
 {
-	
+
 }
 
 void Controller::newGame(int seed)
@@ -24,12 +24,15 @@ void Controller::clickCard(int cardNumber)
 			return;
 		}
 		if(game->getTableCanPlay(*card)) {
-			Command c(PLAY, *card);
-			game->doTurn(c);
+			game->doTurn(Command(PLAY, *card));
 		}
 		else {
-			Command c(DISCARD, *card);
-			game->doTurn(c);
+			game->doTurn(Command(DISCARD, *card));
 		}
 	}
+}
+
+void Controller::ragequit()
+{
+	game->doTurn(Command(RAGEQUIT));
 }

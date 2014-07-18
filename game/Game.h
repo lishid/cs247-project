@@ -23,7 +23,7 @@ public:
 	void init(int seed);
 	void newRound();
 	void invitePlayer(int number, bool isHuman);
-	void doTurn(Command&);
+	void doTurn(Command);
 	void update();
 
 	//Progress status

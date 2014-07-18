@@ -54,6 +54,10 @@ void Player::discard(const Card &card)
 
 CommandType ComputerPlayer::act(Table &table, Command &command)
 {
+	if(command.type != AI) {
+		return BAD;
+	}
+
 	Card *largestPlayable = NULL;
 	Card *smallest = NULL;
 

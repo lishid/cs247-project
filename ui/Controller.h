@@ -9,6 +9,7 @@ public:
 	void newGame(int seed);
 	void invitePlayer(int number, bool isHuman);
 	void clickCard(int cardNumber);
+	void ragequit();
 private:
 	Game *game;
 };
