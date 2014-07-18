@@ -27,9 +27,6 @@ private:
 
 	//Overall frames in vertical space
 	Gtk::VBox ui;
-
-	Gtk::HSeparator ui_separator1;
-	Gtk::HSeparator ui_separator2;
 	
 	//Controls
 	Gtk::HBox ui_controls;
@@ -42,6 +39,7 @@ private:
 	Gtk::ProgressBar ui_progress;
 
 	//Table
+	Gtk::Frame ui_table_frame;
 	Gtk::VBox ui_table;
 	Gtk::HBox *ui_table_rows[SUIT_COUNT];
 	Gtk::Image *ui_table_cells[SUIT_COUNT * RANK_COUNT];
@@ -58,11 +56,15 @@ private:
 
 	Gtk::EventBox *ui_player_border[4];
 	Gtk::Frame *ui_player_frame[4];
-	Gtk::VBox *ui_player_box[4];
+	Gtk::HBox *ui_player_box[4];
+	Gtk::VBox *ui_player_vbox_right[4];
 	Gtk::Button *ui_player_human[4];
 	Gtk::Button *ui_player_computer[4];
+	Gtk::Image *ui_player_type[4];
 	Gtk::Label *ui_player_score[4];
 	Gtk::Label *ui_player_discards[4];
+	Gtk::Button ui_player_ragequit;
+	Gtk::Image ui_player_ragequit_image;
 
 	//Game log
 	Gtk::Frame ui_log_frame;
