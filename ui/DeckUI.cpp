@@ -26,29 +26,50 @@ const char * image_names[] = {
 	"img/nothing.png"
 }; 
 
-PixPtr loadImage(const string & name) {
-	return Gdk::Pixbuf::create_from_file(name);
-}
+const char * image_disabled_names[] = {
+	"img/0_0_a.png", "img/0_1_a.png", "img/0_2_a.png",
+	"img/0_3_a.png", "img/0_4_a.png", "img/0_5_a.png",
+	"img/0_6_a.png", "img/0_7_a.png", "img/0_8_a.png",
+	"img/0_9_a.png", "img/0_j_a.png", "img/0_q_a.png", "img/0_k_a.png",
+
+	"img/1_0_a.png", "img/1_1_a.png", "img/1_2_a.png",
+	"img/1_3_a.png", "img/1_4_a.png", "img/1_5_a.png",
+	"img/1_6_a.png", "img/1_7_a.png", "img/1_8_a.png",
+	"img/1_9_a.png", "img/1_j_a.png", "img/1_q_a.png", "img/1_k_a.png",
+
+	"img/2_0_a.png", "img/2_1_a.png", "img/2_2_a.png",
+	"img/2_3_a.png", "img/2_4_a.png", "img/2_5_a.png",
+	"img/2_6_a.png", "img/2_7_a.png", "img/2_8_a.png",
+	"img/2_9_a.png", "img/2_j_a.png", "img/2_q_a.png", "img/2_k_a.png",
+
+	"img/3_0_a.png", "img/3_1_a.png", "img/3_2_a.png",
+	"img/3_3_a.png", "img/3_4_a.png", "img/3_5_a.png",
+	"img/3_6_a.png", "img/3_7_a.png", "img/3_8_a.png",
+	"img/3_9_a.png", "img/3_j_a.png", "img/3_q_a.png", "img/3_k_a.png",
+
+	"img/nothing.png"
+}; 
 
 DeckUI::DeckUI()  {
-	lout << "DeckUI: Pre-loading images..." << lend;
+	// lout << "Loading deck images..." << lend;
 	int size = G_N_ELEMENTS(image_names);
 	for(int i = 0; i < size; i++) {
-		deck.push_back(loadImage(string(image_names[i])));
+		deck.push_back(Gdk::Pixbuf::create_from_file(string(image_names[i])));
+		deck_disabled.push_back(Gdk::Pixbuf::create_from_file(string(image_disabled_names[i])));
 	}
-	lout << "DeckUI: Complete!" << lend;
+	// lout << "Loaded deck images." << lend;
 }
 
 DeckUI::~DeckUI() {
 }
 
-PixPtr DeckUI::image(const Card &card) {
-	return image(card.getSuit(), card.getRank());
+PixPtr DeckUI::image(const Card &card, bool isDisabled) {
+	return image(card.getSuit(), card.getRank(), isDisabled);
 }
 
-PixPtr DeckUI::image(Suit suit, Rank rank) {
+PixPtr DeckUI::image(Suit suit, Rank rank, bool isDisabled) {
 	int index = ((int) suit) * RANK_COUNT + ((int) rank);
-	return deck[index];
+	return isDisabled ? deck_disabled[index] : deck[index];
 }
 
 PixPtr DeckUI::empty() {

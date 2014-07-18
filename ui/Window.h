@@ -9,6 +9,7 @@
 #include "../game/Card.h"
 #include "../ui/Controller.h"
 #include "DeckUI.h"
+#include "PlayerUI.h"
 
 class Controller;
 class Game;
@@ -22,6 +23,7 @@ private:
 	Controller *controller;
 	Game *game;
 	DeckUI deck;
+	PlayerUI player;
 
 	//Overall frames in vertical space
 	Gtk::VBox ui;
@@ -64,6 +66,7 @@ private:
 
 	//Game log
 	Gtk::Frame ui_log_frame;
+	Gtk::ScrolledWindow ui_log_scrollable_container;
 	Gtk::TextView ui_log;
 
 	void handClicked();

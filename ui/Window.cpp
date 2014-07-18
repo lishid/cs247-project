@@ -15,11 +15,20 @@ Window::Window(Controller* c, Game* g)
 	ui(false, 2), ui_controls(true, 2),
 	ui_start("Start"), ui_quit("Quit"), 
 	ui_seed_label("Seed:"), ui_table(true, 1),
-	ui_hand(true, 1), ui_players(true, 1),
-	ui_log_frame("Log")
+	ui_hand(true, 1), ui_players(true, 1)
 {
+
+	//Log
+	//need to set these early, otherwise stuff will not show until the initialization will be complete
+	ui_log.set_size_request(-1, 100);
+	ui_log.set_editable(false);
+	ui_log.set_sensitive(false);
+	ui_log.set_left_margin(3);
+	ui_log_scrollable_container.add(ui_log);
+	ui_log_frame.add(ui_log_scrollable_container);
+
 	Logger.setConsole(&ui_log);
-	lout << "Window: Loading..." << lend;
+	lout << "Straights is loading..." << lend;
 
 	//Table rows
 	PixPtr empty = deck.empty();
@@ -61,9 +70,9 @@ Window::Window(Controller* c, Game* g)
 	ui.pack_start(ui_separator1, true, false);
 	ui.pack_start(ui_progress, true, false);
 	ui.pack_start(ui_table, true, false);
+	ui.pack_start(ui_separator2, true, false);
 	ui.pack_start(ui_hand, true, false, 2);
 	ui.pack_start(ui_players, true, false);
-	ui.pack_start(ui_separator2, true, false);
 	ui.pack_start(ui_log_frame, true, false, 2);
 
 	//Controls
@@ -93,9 +102,7 @@ Window::Window(Controller* c, Game* g)
 	for(int i = 0; i < RANK_COUNT; i++) {
 		ui_hand.pack_start(*ui_hand_cells[i], true, true, 1);
 		ui_hand_cells[i]->add(*ui_hand_align[i]);
-		ui_hand_cells[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("green"));
 		ui_hand_align[i]->add(*ui_hand_buttons[i]);
-		ui_hand_align[i]->set_padding(1, 1, 1, 1);
 		ui_hand_buttons[i]->set_image(*ui_hand_images[i]);
 		ui_hand_buttons[i]->signal_clicked().connect(
 			sigc::mem_fun(*this, &Window::handClicked));
@@ -117,15 +124,11 @@ Window::Window(Controller* c, Game* g)
 			sigc::mem_fun(*this, &Window::buttonChooseClicked));
 	}
 
-	//Log
-	ui_log_frame.add(ui_log);
-	ui_log.set_size_request(-1, 50);
-
 	show_all();
 
 	game->subscribe(this);
 
-	lout << "Window: Complete!" << lend;
+	lout << "Please select a type for each player." << lend;
 }
 
 Window::~Window()
@@ -143,7 +146,7 @@ void Window::update()
 		for(int j = 0; j < RANK_COUNT; j++) {
 			Card card((Suit)i, (Rank)j);
 			if(game->getTableContainsCard(card)) {
-				ui_table_cells[i * RANK_COUNT + j]->set(deck.image(card));
+				ui_table_cells[i * RANK_COUNT + j]->set(deck.image(card, false));
 			}
 			else {
 				ui_table_cells[i * RANK_COUNT + j]->set(deck.empty());
@@ -155,17 +158,12 @@ void Window::update()
 	for(int i = 0; i < RANK_COUNT; i++) {
 		Card *card = game->getCurrentPlayerHand(i);
 		if(card != NULL) {
-			ui_hand_images[i]->set(deck.image(*card));
+			ui_hand_images[i]->set(deck.image(*card, !game->getTableCanPlay(*card)));
+			ui_hand_buttons[i]->set_sensitive(true);
 		}
 		else {
 			ui_hand_images[i]->set(deck.empty());
-		}
-
-		if(card != NULL && game->getTableCanPlay(*card)) {
-			ui_hand_cells[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("green"));
-		}
-		else {
-			ui_hand_cells[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("red"));
+			ui_hand_buttons[i]->set_sensitive(false);
 		}
 	}
 

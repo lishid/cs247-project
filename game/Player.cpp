@@ -86,7 +86,7 @@ CommandType HumanPlayer::act(Table &table, Command &c)
 			return c.type;
 		}
 		else {
-			lout << "This is not a legal play." << lend;
+			lerr << "This is not a legal play." << lend;
 		}
 		break;
 	case DISCARD:
@@ -95,7 +95,7 @@ CommandType HumanPlayer::act(Table &table, Command &c)
 			return c.type;
 		}
 		else {
-			lout << "You have a legal play. You may not discard." << lend;
+			lerr << "You have a legal play. You may not discard." << lend;
 		}
 		break;
 	case RAGEQUIT:
