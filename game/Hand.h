@@ -10,6 +10,7 @@ public:
 	Hand(Hand *hand);
 	virtual ~Hand();
 	void deal(Card * const *newCards);
+	void reset();
 	void endRound();
 	Card *play(const Card &card);
 	Card *discard(const Card &card);

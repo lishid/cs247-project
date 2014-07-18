@@ -88,6 +88,7 @@ void Game::init(int seed)
 			delete players[i];
 		}
 		players[i] = NULL;
+		hands[i]->reset();
 	}
 
 	isPlaying = false;
@@ -127,6 +128,9 @@ void Game::newRound()
 
 void Game::invitePlayer(int index, bool isHuman)
 {
+	if(getPlayerExists(index)) {
+		return;
+	}
 	lout << "Player " << (index + 1) << " is a ";
 	if(isHuman) {
 		lout << "human." << lend;

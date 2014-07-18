@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Hand::Hand() : score(0)
+Hand::Hand()
 {
-	clear();
+	reset();
 }
 
 Hand::Hand(Hand *hand) : score(hand->score)
@@ -25,6 +25,12 @@ void Hand::deal(Card * const *newCards)
 	for(int i = 0; i < RANK_COUNT; i++) {
 		cards[i] = newCards[i];
 	}
+}
+
+void Hand::reset()
+{
+	score = 0;
+	clear();
 }
 
 void Hand::endRound()
