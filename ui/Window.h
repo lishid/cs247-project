@@ -34,6 +34,7 @@ private:
 	Gtk::Button ui_quit;
 	Gtk::Label ui_seed_label;
 	Gtk::Entry ui_seed;
+	Gtk::Label ui_announcer_label;
 
 	//Game progress
 	Gtk::ProgressBar ui_progress;
