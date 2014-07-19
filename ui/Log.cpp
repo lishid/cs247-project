@@ -16,12 +16,18 @@ void Log::setConsole(Gtk::TextView *c)
 	}
 }
 
+void Log::setAnnounce(Gtk::Label *c)
+{
+	announce = c;
+}
+
 void Log::clear()
 {
 	if(console != NULL) {
 		Glib::RefPtr<Gtk::TextBuffer> buffer = console->get_buffer();
 		buffer->erase(buffer->begin(), buffer->end());
 	}
+	announce->set_text("");
 }
 
 void Log::flush()
@@ -39,6 +45,7 @@ void Log::flush()
 		while(Gtk::Main::instance()->events_pending()) {
 			Gtk::Main::instance()->iteration();
 		}
+		announce->set_text(lout_str);
 	}
 	
 	lout.str("");

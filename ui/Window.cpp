@@ -23,6 +23,7 @@ Window::Window(Controller* c, Game* g)
 	ui_log_frame.add(ui_log_scrollable_container);
 
 	Logger.setConsole(&ui_log);
+	Logger.setAnnounce(&ui_announcer_label);
 	lout << "Straights is loading..." << lend;
 	
 	//Table rows

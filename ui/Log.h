@@ -10,8 +10,10 @@ public:
 	void flush();
 	void clear();
 	void setConsole(Gtk::TextView *c);
+	void setAnnounce(Gtk::Label *c);
 private:
 	Gtk::TextView *console;
+	Gtk::Label *announce;
 };
 
 struct Lend {};
