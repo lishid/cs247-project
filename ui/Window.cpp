@@ -14,7 +14,7 @@ Window::Window(Controller* c, Game* g)
 	: controller(c), game(g),
 	ui(false, 2), ui_controls(false, 3),
 	ui_start("  Start  "), ui_quit("  Quit  "), 
-	ui_seed_label("  Seed: "), ui_announcer_label("PLACE YOUR ANNOUNCER TEXT HERE"),
+	ui_seed_label("  Seed: "), ui_announcer_label(" "),
 	ui_table_frame("Cards on the table"), ui_table(true, 1),
 	ui_hand(true, 1), ui_players(true, 3),
 	ui_player_ragequit("   RAGEQUIT")

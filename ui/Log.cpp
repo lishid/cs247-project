@@ -27,7 +27,7 @@ void Log::clear()
 		Glib::RefPtr<Gtk::TextBuffer> buffer = console->get_buffer();
 		buffer->erase(buffer->begin(), buffer->end());
 	}
-	announce->set_text("");
+	announce->set_markup("<b> </b>");
 }
 
 void Log::flush()
@@ -45,7 +45,14 @@ void Log::flush()
 		while(Gtk::Main::instance()->events_pending()) {
 			Gtk::Main::instance()->iteration();
 		}
-		announce->set_text(lout_str);
+		
+		// need to trim newline character, otherwise it will mess with formatting
+		if(lerr_str.length() > 0) {
+			announce->set_markup("<span foreground=\"red\" weight=\"bold\">" + lerr_str.substr(0, lerr_str.length() - 1) + "</span>");
+		} else {
+			announce->set_markup("<b>" + lout_str.substr(0, lout_str.length() - 1) + "</b>");
+		}
+		
 	}
 	
 	lout.str("");
