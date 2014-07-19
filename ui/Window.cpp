@@ -127,7 +127,11 @@ Window::Window(Controller* c, Game* g)
 
 	ui_player_ragequit_image.set(player.image());
 	ui_player_ragequit.set_image(ui_player_ragequit_image);
-	ui_players.pack_start(ui_player_ragequit, true, true);	//Log
+	ui_player_ragequit.signal_clicked().connect(
+		sigc::mem_fun(*this, &Window::buttonRageQuitClicked));
+	ui_players.pack_start(ui_player_ragequit, true, true);
+
+	//Log
 	ui_log.set_size_request(-1, 100);
 	ui_log.set_editable(false);
 	ui_log.set_sensitive(false);
@@ -259,6 +263,11 @@ void Window::buttonStartClicked()
 void Window::buttonQuitClicked()
 {
 	exit(0);
+}
+
+void Window::buttonRageQuitClicked()
+{
+	controller->ragequit();
 }
 
 bool Window::aiTimeout(int timer)

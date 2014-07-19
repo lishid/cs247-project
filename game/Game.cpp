@@ -152,6 +152,10 @@ void Game::invitePlayer(int index, bool isHuman)
 
 void Game::doTurn(Command command)
 {
+	if(!isPlaying) {
+		return;
+	}
+
 	CommandType type = players[currentPlayerNumber]->act(table, command);
 
 	switch(type) {
@@ -161,6 +165,7 @@ void Game::doTurn(Command command)
 		break;
 	case RAGEQUIT:
 		players[currentPlayerNumber] = new ComputerPlayer(players[currentPlayerNumber]);
+		notify();
 	case BAD:
 		return;
 	}

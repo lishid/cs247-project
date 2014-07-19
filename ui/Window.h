@@ -76,6 +76,7 @@ private:
 	void handClicked();
 	void buttonChooseClicked();
 	void buttonStartClicked();
+	void buttonRageQuitClicked();
 	void buttonQuitClicked();
 	bool aiTimeout(int timer);
 };
