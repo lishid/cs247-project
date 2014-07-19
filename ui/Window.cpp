@@ -14,25 +14,28 @@ Window::Window(Controller* c, Game* g)
 	: controller(c), game(g),
 	ui(false, 2), ui_controls(true, 2),
 	ui_start("Start"), ui_quit("Quit"), 
-	ui_seed_label("Seed:"), ui_table(true, 1),
-	ui_hand(true, 1), ui_players(true, 1)
+	ui_seed_label("Seed:"), ui_table_frame("Cards on the table"),
+	ui_table(true, 1), ui_hand(true, 1),
+	ui_players(true, 3),
+	ui_player_ragequit("   RAGEQUIT")
 {
 	ui_log_scrollable_container.add(ui_log);
 	ui_log_frame.add(ui_log_scrollable_container);
 
 	Logger.setConsole(&ui_log);
 	lout << "Straights is loading..." << lend;
-
+	
 	//Table rows
 	PixPtr empty = deck.empty();
 	for(int i = 0; i < SUIT_COUNT; i++) {
-		ui_table_rows[i] = Gtk::manage(new Gtk::HBox(true, 1));
+		ui_table_rows[i] = Gtk::manage(new Gtk::HBox(true, 0));
 	}
 	//Table cells
 	for(int i = 0; i < SUIT_COUNT * RANK_COUNT; i++) {
 		ui_table_cells[i] = Gtk::manage(new Gtk::Image(empty));
-		ui_table_cells[i]->set_padding(1, 1);
 	}
+	ui_table_frame.add(ui_table);
+	
 	//Hand cells
 	for(int i = 0; i < RANK_COUNT; i++) {
 		ui_hand_cells[i] = Gtk::manage(new Gtk::EventBox());
@@ -46,11 +49,13 @@ Window::Window(Controller* c, Game* g)
 		sprintf(numstr, "%d", i+1);
 		ui_player_border[i] = Gtk::manage(new Gtk::EventBox());
 		ui_player_frame[i] = Gtk::manage(new Gtk::Frame(string("Player ") + string(numstr)));
-		ui_player_box[i] = Gtk::manage(new Gtk::VBox(false, 2));
+		ui_player_box[i] = Gtk::manage(new Gtk::HBox(false, 2));
+		ui_player_vbox_right[i] = Gtk::manage(new Gtk::VBox(false, 2));
 		ui_player_human[i] = Gtk::manage(new Gtk::Button("Human"));
-		ui_player_computer[i] = Gtk::manage(new Gtk::Button("Computer"));
-		ui_player_score[i] = Gtk::manage(new Gtk::Label("test"));
-		ui_player_discards[i] = Gtk::manage(new Gtk::Label("test"));
+		ui_player_computer[i] = Gtk::manage(new Gtk::Button("AI"));
+		ui_player_score[i] = Gtk::manage(new Gtk::Label("Score: -"));
+		ui_player_discards[i] = Gtk::manage(new Gtk::Label("Discards: -"));
+		ui_player_type[i] = Gtk::manage(new Gtk::Image(empty));
 	}
 
 	//Window init
@@ -60,10 +65,8 @@ Window::Window(Controller* c, Game* g)
 
 	//Overall frames
 	ui.pack_start(ui_controls, true, false, 2);
-	ui.pack_start(ui_separator1, true, false);
 	ui.pack_start(ui_progress, true, false);
-	ui.pack_start(ui_table, true, false);
-	ui.pack_start(ui_separator2, true, false);
+	ui.pack_start(ui_table_frame, true, false);
 	ui.pack_start(ui_hand, true, false, 2);
 	ui.pack_start(ui_players, true, false);
 	ui.pack_start(ui_log_frame, true, false, 2);
@@ -102,14 +105,19 @@ Window::Window(Controller* c, Game* g)
 	}
 
 	//Players
+	ui_players.set_size_request(-1, 48);
 	for(int i = 0; i < 4; i++) {
 		ui_players.pack_start(*ui_player_frame[i], true, true);
 		ui_player_frame[i]->add(*ui_player_border[i]);
 		ui_player_border[i]->add(*ui_player_box[i]);
-		ui_player_box[i]->pack_start(*ui_player_human[i], true, true);
-		ui_player_box[i]->pack_start(*ui_player_computer[i], true, true);
-		ui_player_box[i]->pack_start(*ui_player_score[i], true, true);
-		ui_player_box[i]->pack_start(*ui_player_discards[i], true, true);
+		ui_player_type[i]->set_size_request(0, -1);
+		ui_player_vbox_right[i]->set_size_request(0, -1);
+		ui_player_box[i]->pack_start(*ui_player_type[i], false, false, 3);
+		ui_player_box[i]->pack_start(*ui_player_human[i], true, true, 3);
+		ui_player_box[i]->pack_end(*ui_player_computer[i], true, true, 3);
+		ui_player_box[i]->pack_start(*ui_player_vbox_right[i], true, true);
+		ui_player_vbox_right[i]->pack_start(*ui_player_score[i], false, false);
+		ui_player_vbox_right[i]->pack_start(*ui_player_discards[i], false, false);
 
 		ui_player_human[i]->signal_clicked().connect(
 			sigc::mem_fun(*this, &Window::buttonChooseClicked));
@@ -117,12 +125,13 @@ Window::Window(Controller* c, Game* g)
 			sigc::mem_fun(*this, &Window::buttonChooseClicked));
 	}
 
-	//Log
+	ui_player_ragequit_image.set(player.image());
+	ui_player_ragequit.set_image(ui_player_ragequit_image);
+	ui_players.pack_start(ui_player_ragequit, true, true);	//Log
 	ui_log.set_size_request(-1, 100);
 	ui_log.set_editable(false);
 	ui_log.set_sensitive(false);
 	ui_log.set_left_margin(3);
-
 	show_all();
 
 	game->subscribe(this);
@@ -185,25 +194,25 @@ void Window::update()
 			isCurrentPlayer = false;
 			ui_player_human[i]->show();
 			ui_player_computer[i]->show();
+			ui_player_type[i]->hide();
+			ui_player_vbox_right[i]->hide();
 		}
 		else {
+			ui_player_type[i]->set(player.image(game->getPlayerIsHuman(i)));
 			ui_player_human[i]->hide();
 			ui_player_computer[i]->hide();
+			ui_player_type[i]->set_size_request(-1, -1);
+			ui_player_vbox_right[i]->set_size_request(-1, -1);
+			ui_player_type[i]->show();
+			ui_player_vbox_right[i]->show();
 		}
-
-		//TODO: Set human/computer image here
-		if(game->getPlayerIsHuman(i)) {
-
-		}
-		else {
-
-		}
+		
 		//Highlight current player
 		if(isCurrentPlayer) {
-			ui_player_border[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("green"));
+			//ui_player_border[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("green"));
 		}
 		else {
-			gtk_widget_modify_bg(GTK_WIDGET(ui_player_border[i]->gobj()), GTK_STATE_NORMAL, NULL);
+			//gtk_widget_modify_bg(GTK_WIDGET(ui_player_border[i]->gobj()), GTK_STATE_NORMAL, NULL);
 		}
 		ui_player_score[i]->set_text(std::string("Score: ") + std::to_string(score));
 		ui_player_discards[i]->set_text(std::string("Discards: ") + std::to_string(discards));
