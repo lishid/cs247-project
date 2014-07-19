@@ -1,0 +1,8 @@
+Bonus features:
+
+- Progress bar indicating round progress
+- Playable card highlight
+- Game log / Text display documenting game steps
+- Computer player "thinking" delay
+- Fancy cards
+- Smart AI
