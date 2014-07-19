@@ -12,11 +12,11 @@ namespace std
 
 Window::Window(Controller* c, Game* g)
 	: controller(c), game(g),
-	ui(false, 2), ui_controls(true, 2),
-	ui_start("Start"), ui_quit("Quit"), 
-	ui_seed_label("Seed:"), ui_table_frame("Cards on the table"),
-	ui_table(true, 1), ui_hand(true, 1),
-	ui_players(true, 3),
+	ui(false, 2), ui_controls(false, 3),
+	ui_start("  Start  "), ui_quit("  Quit  "), 
+	ui_seed_label("  Seed: "), ui_announcer_label("PLACE YOUR ANNOUNCER TEXT HERE"),
+	ui_table_frame("Cards on the table"), ui_table(true, 1),
+	ui_hand(true, 1), ui_players(true, 3),
 	ui_player_ragequit("   RAGEQUIT")
 {
 	ui_log_scrollable_container.add(ui_log);
@@ -72,11 +72,13 @@ Window::Window(Controller* c, Game* g)
 	ui.pack_start(ui_log_frame, true, false, 2);
 
 	//Controls
+	ui_seed.set_width_chars(10);
 	ui_seed.set_text("0");
-	ui_controls.pack_start(ui_seed_label, true, true);
-	ui_controls.pack_start(ui_seed, true, true);
-	ui_controls.pack_start(ui_start, true, true);
-	ui_controls.pack_start(ui_quit, true, true);
+	ui_controls.pack_start(ui_start, false, false);
+	ui_controls.pack_start(ui_seed_label, false, false);
+	ui_controls.pack_start(ui_seed, false, false);
+	ui_controls.pack_start(ui_announcer_label, true, true);
+	ui_controls.pack_start(ui_quit, false, false);
 
 	ui_start.signal_clicked().connect(
 		sigc::mem_fun(*this, &Window::buttonStartClicked));
@@ -172,17 +174,17 @@ void Window::update()
 	for(int i = 0; i < RANK_COUNT; i++) {
 		if(!game->getPlayerIsHuman(currentPlayer)) {
 			ui_hand_images[i]->set(deck.back());
-			//ui_hand_buttons[i]->set_sensitive(false);
+			ui_hand_buttons[i]->set_sensitive(false);
 		}
 		else {
 			Card *card = game->getCurrentPlayerHand(i);
 			if(card != NULL) {
 				ui_hand_images[i]->set(deck.image(*card, !game->getTableCanPlay(*card)));
-				//ui_hand_buttons[i]->set_sensitive(true);
+				ui_hand_buttons[i]->set_sensitive(true);
 			}
 			else {
 				ui_hand_images[i]->set(deck.empty());
-				//ui_hand_buttons[i]->set_sensitive(false);
+				ui_hand_buttons[i]->set_sensitive(false);
 			}
 		}
 	}
@@ -202,7 +204,7 @@ void Window::update()
 			ui_player_vbox_right[i]->hide();
 		}
 		else {
-			ui_player_type[i]->set(player.image(game->getPlayerIsHuman(i)));
+			ui_player_type[i]->set(player.image(game->getPlayerIsHuman(i), isCurrentPlayer));
 			ui_player_human[i]->hide();
 			ui_player_computer[i]->hide();
 			ui_player_type[i]->set_size_request(-1, -1);
@@ -211,13 +213,6 @@ void Window::update()
 			ui_player_vbox_right[i]->show();
 		}
 		
-		//Highlight current player
-		if(isCurrentPlayer) {
-			//ui_player_border[i]->modify_bg(Gtk::STATE_NORMAL, Gdk::Color("green"));
-		}
-		else {
-			//gtk_widget_modify_bg(GTK_WIDGET(ui_player_border[i]->gobj()), GTK_STATE_NORMAL, NULL);
-		}
 		ui_player_score[i]->set_text(std::string("Score: ") + std::to_string(score));
 		ui_player_discards[i]->set_text(std::string("Discards: ") + std::to_string(discards));
 	}

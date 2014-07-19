@@ -15,9 +15,10 @@ public:
 	PlayerUI();
 	virtual ~PlayerUI();
 	PixPtr image();
-	PixPtr image(bool isHuman);
+	PixPtr image(bool isHuman, bool isHighlight);
 private:
 	std::vector<PixPtr> images;
+	std::vector<PixPtr> images_hl;
 };
 
 #endif
