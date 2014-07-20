@@ -1,8 +1,11 @@
 Bonus features:
 
+- Top text display showing the most recent information
 - Progress bar indicating round progress
+- Recently played card highlight
 - Playable card highlight
-- Game log / Text display documenting game steps
-- Computer player "thinking" delay
-- Fancy cards
+- Current player highlight
 - Smart AI
+- Computer player "thinking" delay
+- Log box documenting game progress
+- Fancy card graphics
